@@ -1,23 +1,22 @@
 <?php
 
-namespace {{ namespace }};
+namespace App\Http\Controllers;
 
-use {{ rootNamespace }}Http\Controllers\Controller;
 use App\Helpers\Hermes;
 use App\Helpers\Pariette;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class {{ class }} extends Controller
+class UsersController extends Controller
 {
     public function index(Request $request)
     {
         if (!$this->controlUser('TABLENAME', 'read')) {
-            return Hermes::send('lng_0002', 401);
+            return Hermes::send('Authorization Error', 401);
         }
-        $query = DB::table('TABLENAME');
+        $query = DB::table('blog')->where();
 
         $data = $query->get();
 
@@ -25,13 +24,13 @@ class {{ class }} extends Controller
             return Hermes::send($data, 200);
         }
         
-        return Hermes::send('lng_0001', 404);
+        return Hermes::send('Not Found', 404);
     }
 
     public function store(Request $request)
     {
         if (!$this->controlUser($request->store, 'TABLENAME', 'create')) {
-            return Hermes::send('lng_0002', 401);
+            return Hermes::send('Authorization Error', 401);
         }
 
         $validator = Validator::make($request->all(), [
@@ -54,7 +53,7 @@ class {{ class }} extends Controller
         if ($work) {
             return Hermes::send($work, 201);
         }
-        return Hermes::send('lng_0003', 204);
+        return Hermes::send('Create Error', 204);
     }
 
     public function show($id)
@@ -67,7 +66,7 @@ class {{ class }} extends Controller
     public function update(Request $request, $id)
     {
         if (!$this->controlUser('TABLENAME', 'update')) {
-            return Hermes::send('lng_0002', 401);
+            return Hermes::send('Authorization Error', 401);
         }
 		$validator = Validator::make($request->all(), [
             'title' => 'required',
@@ -87,7 +86,7 @@ class {{ class }} extends Controller
         if ($update) {
             return Hermes::send($data, 200);
         }
-        return Hermes::send('lng_0004', 204);
+        return Hermes::send('Update Error', 204);
     }
     
 

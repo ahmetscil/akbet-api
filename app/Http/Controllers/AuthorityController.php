@@ -1,23 +1,22 @@
 <?php
 
-namespace {{ namespace }};
+namespace App\Http\Controllers;
 
-use {{ rootNamespace }}Http\Controllers\Controller;
 use App\Helpers\Hermes;
 use App\Helpers\Pariette;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class {{ class }} extends Controller
+class AuthorityController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser('TABLENAME', 'read')) {
+        if (!$this->controlUser('authority', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
-        $query = DB::table('TABLENAME');
+        $query = DB::table('authority');
 
         $data = $query->get();
 
@@ -30,12 +29,17 @@ class {{ class }} extends Controller
 
     public function store(Request $request)
     {
-        if (!$this->controlUser($request->store, 'TABLENAME', 'create')) {
+        if (!$this->controlUser($request->store, 'authority', 'create')) {
             return Hermes::send('lng_0002', 401);
         }
 
         $validator = Validator::make($request->all(), [
-            'title' => 'required',
+            'user' => 'required',
+            'company' => 'required',
+            'project' => 'required',
+            'crud' => 'required',
+            'boss' => 'required',
+            'admin' => 'required',
             'status' => 'required'
         ]);
 
@@ -44,13 +48,17 @@ class {{ class }} extends Controller
         }
 
         $data = [
-            'user' => Pariette::user(),
-            'title' => $request->title,
+            'user' => $request->user,
+            'company' => $request->company,
+            'project' => $request->project,
+            'crud' => $request->crud,
+            'boss' => $request->boss,
+            'admin' => $request->admin,
             'status' => $request->status,
             'created_at' => Pariette::now()
         ];
 
-        $work = DB::table('TABLENAME')->insertGetId($data);
+        $work = DB::table('authority')->insertGetId($data);
         if ($work) {
             return Hermes::send($work, 201);
         }
@@ -59,18 +67,23 @@ class {{ class }} extends Controller
 
     public function show($id)
     {
-        $data = DB::table('TABLENAME')->find($id);
+        $data = DB::table('authority')->find($id);
         return Hermes::send($data, 200);
     }
 
 
     public function update(Request $request, $id)
     {
-        if (!$this->controlUser('TABLENAME', 'update')) {
+        if (!$this->controlUser('authority', 'update')) {
             return Hermes::send('lng_0002', 401);
         }
 		$validator = Validator::make($request->all(), [
-            'title' => 'required',
+            'user' => 'required',
+            'company' => 'required',
+            'project' => 'required',
+            'crud' => 'required',
+            'boss' => 'required',
+            'admin' => 'required',
             'status' => 'required'
         ]);
 		if ($validator->fails()) {
@@ -78,11 +91,17 @@ class {{ class }} extends Controller
 		}
     
         $data = [
-            'title' => $request->title,
+            'user' => $request->user,
+            'company' => $request->company,
+            'project' => $request->project,
+            'crud' => $request->crud,
+            'boss' => $request->boss,
+            'admin' => $request->admin,
+            'status' => $request->status,
             'updated_at' => Pariette::now()
         ];
 
-        $update = DB::table('TABLENAME')->where('id', $id)->update($data);
+        $update = DB::table('authority')->where('id', $id)->update($data);
         
         if ($update) {
             return Hermes::send($data, 200);

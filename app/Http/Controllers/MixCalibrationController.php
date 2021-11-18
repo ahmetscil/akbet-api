@@ -1,23 +1,22 @@
 <?php
 
-namespace {{ namespace }};
+namespace App\Http\Controllers;
 
-use {{ rootNamespace }}Http\Controllers\Controller;
 use App\Helpers\Hermes;
 use App\Helpers\Pariette;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class {{ class }} extends Controller
+class MixCalibrationController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser('TABLENAME', 'read')) {
+        if (!$this->controlUser('mix_calibration', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
-        $query = DB::table('TABLENAME');
+        $query = DB::table('mix_calibration');
 
         $data = $query->get();
 
@@ -30,12 +29,14 @@ class {{ class }} extends Controller
 
     public function store(Request $request)
     {
-        if (!$this->controlUser($request->store, 'TABLENAME', 'create')) {
+        if (!$this->controlUser($request->store, 'mix_calibration', 'create')) {
             return Hermes::send('lng_0002', 401);
         }
 
         $validator = Validator::make($request->all(), [
-            'title' => 'required',
+            'mix' => 'required',
+            'days' => 'required',
+            'strength' => 'required',
             'status' => 'required'
         ]);
 
@@ -44,13 +45,14 @@ class {{ class }} extends Controller
         }
 
         $data = [
-            'user' => Pariette::user(),
-            'title' => $request->title,
+            'mix' => $request->mix,
+            'days' => $request->days,
+            'strength' => $request->strength,
             'status' => $request->status,
             'created_at' => Pariette::now()
         ];
 
-        $work = DB::table('TABLENAME')->insertGetId($data);
+        $work = DB::table('mix_calibration')->insertGetId($data);
         if ($work) {
             return Hermes::send($work, 201);
         }
@@ -59,18 +61,20 @@ class {{ class }} extends Controller
 
     public function show($id)
     {
-        $data = DB::table('TABLENAME')->find($id);
+        $data = DB::table('mix_calibration')->find($id);
         return Hermes::send($data, 200);
     }
 
 
     public function update(Request $request, $id)
     {
-        if (!$this->controlUser('TABLENAME', 'update')) {
+        if (!$this->controlUser('mix_calibration', 'update')) {
             return Hermes::send('lng_0002', 401);
         }
 		$validator = Validator::make($request->all(), [
-            'title' => 'required',
+            'mix' => 'required',
+            'days' => 'required',
+            'strength' => 'required',
             'status' => 'required'
         ]);
 		if ($validator->fails()) {
@@ -78,11 +82,14 @@ class {{ class }} extends Controller
 		}
     
         $data = [
-            'title' => $request->title,
+            'mix' => $request->mix,
+            'days' => $request->days,
+            'strength' => $request->strength,
+            'status' => $request->status,
             'updated_at' => Pariette::now()
         ];
 
-        $update = DB::table('TABLENAME')->where('id', $id)->update($data);
+        $update = DB::table('mix_calibration')->where('id', $id)->update($data);
         
         if ($update) {
             return Hermes::send($data, 200);

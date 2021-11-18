@@ -1,23 +1,22 @@
 <?php
 
-namespace {{ namespace }};
+namespace App\Http\Controllers;
 
-use {{ rootNamespace }}Http\Controllers\Controller;
 use App\Helpers\Hermes;
 use App\Helpers\Pariette;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class {{ class }} extends Controller
+class DownlinkController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser('TABLENAME', 'read')) {
+        if (!$this->controlUser('downlink', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
-        $query = DB::table('TABLENAME');
+        $query = DB::table('downlink');
 
         $data = $query->get();
 
@@ -30,13 +29,13 @@ class {{ class }} extends Controller
 
     public function store(Request $request)
     {
-        if (!$this->controlUser($request->store, 'TABLENAME', 'create')) {
+        if (!$this->controlUser($request->store, 'downlink', 'create')) {
             return Hermes::send('lng_0002', 401);
         }
 
         $validator = Validator::make($request->all(), [
-            'title' => 'required',
-            'status' => 'required'
+            'DevEUI' => 'required',
+            'payload_hex' => 'required'
         ]);
 
         if ($validator->fails()) {
@@ -44,13 +43,13 @@ class {{ class }} extends Controller
         }
 
         $data = [
-            'user' => Pariette::user(),
-            'title' => $request->title,
-            'status' => $request->status,
+            'measurement' => $request->measurement,
+            'DevEUI' => $request->DevEUI,
+            'payload_hex' => $request->payload_hex,
             'created_at' => Pariette::now()
         ];
 
-        $work = DB::table('TABLENAME')->insertGetId($data);
+        $work = DB::table('downlink')->insertGetId($data);
         if ($work) {
             return Hermes::send($work, 201);
         }
@@ -59,30 +58,32 @@ class {{ class }} extends Controller
 
     public function show($id)
     {
-        $data = DB::table('TABLENAME')->find($id);
+        $data = DB::table('downlink')->find($id);
         return Hermes::send($data, 200);
     }
 
 
     public function update(Request $request, $id)
     {
-        if (!$this->controlUser('TABLENAME', 'update')) {
+        if (!$this->controlUser('downlink', 'update')) {
             return Hermes::send('lng_0002', 401);
         }
 		$validator = Validator::make($request->all(), [
-            'title' => 'required',
-            'status' => 'required'
+            'DevEUI' => 'required',
+            'payload_hex' => 'required'
         ]);
 		if ($validator->fails()) {
             return Hermes::send($validator->messages(), 403);
 		}
     
         $data = [
-            'title' => $request->title,
+            'measurement' => $request->measurement,
+            'DevEUI' => $request->DevEUI,
+            'payload_hex' => $request->payload_hex,
             'updated_at' => Pariette::now()
         ];
 
-        $update = DB::table('TABLENAME')->where('id', $id)->update($data);
+        $update = DB::table('downlink')->where('id', $id)->update($data);
         
         if ($update) {
             return Hermes::send($data, 200);

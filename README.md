@@ -10,3 +10,11 @@ php -d memory_limit=-1 /usr/local/bin/composer require tymon/jwt-auth --ignore-p
 
 
 yeni kurulumda .env dosyasını update etmeyi unutma.
+
+
+
+
+lng_0001: not found
+lng_0002: authorization error
+lng_0003: create error
+lng_0004: update error

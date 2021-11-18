@@ -1,23 +1,22 @@
 <?php
 
-namespace {{ namespace }};
+namespace App\Http\Controllers;
 
-use {{ rootNamespace }}Http\Controllers\Controller;
 use App\Helpers\Hermes;
 use App\Helpers\Pariette;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class {{ class }} extends Controller
+class SensorsController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser('TABLENAME', 'read')) {
+        if (!$this->controlUser('sensors', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
-        $query = DB::table('TABLENAME');
+        $query = DB::table('sensors');
 
         $data = $query->get();
 
@@ -30,12 +29,16 @@ class {{ class }} extends Controller
 
     public function store(Request $request)
     {
-        if (!$this->controlUser($request->store, 'TABLENAME', 'create')) {
+        if (!$this->controlUser($request->store, 'sensors', 'create')) {
             return Hermes::send('lng_0002', 401);
         }
 
         $validator = Validator::make($request->all(), [
+            'project' => 'required',
+            'DevEUI' => 'required',
+            'type' => 'required',
             'title' => 'required',
+            'description' => 'required',
             'status' => 'required'
         ]);
 
@@ -44,13 +47,16 @@ class {{ class }} extends Controller
         }
 
         $data = [
-            'user' => Pariette::user(),
+            'project' => $request->project,
+            'DevEUI' => $request->DevEUI,
+            'type' => $request->type,
             'title' => $request->title,
+            'description' => $request->description,
             'status' => $request->status,
             'created_at' => Pariette::now()
         ];
 
-        $work = DB::table('TABLENAME')->insertGetId($data);
+        $work = DB::table('sensors')->insertGetId($data);
         if ($work) {
             return Hermes::send($work, 201);
         }
@@ -59,18 +65,22 @@ class {{ class }} extends Controller
 
     public function show($id)
     {
-        $data = DB::table('TABLENAME')->find($id);
+        $data = DB::table('sensors')->find($id);
         return Hermes::send($data, 200);
     }
 
 
     public function update(Request $request, $id)
     {
-        if (!$this->controlUser('TABLENAME', 'update')) {
+        if (!$this->controlUser('sensors', 'update')) {
             return Hermes::send('lng_0002', 401);
         }
 		$validator = Validator::make($request->all(), [
+            'project' => 'required',
+            'DevEUI' => 'required',
+            'type' => 'required',
             'title' => 'required',
+            'description' => 'required',
             'status' => 'required'
         ]);
 		if ($validator->fails()) {
@@ -78,11 +88,16 @@ class {{ class }} extends Controller
 		}
     
         $data = [
+            'project' => $request->project,
+            'DevEUI' => $request->DevEUI,
+            'type' => $request->type,
             'title' => $request->title,
+            'description' => $request->description,
+            'status' => $request->status,
             'updated_at' => Pariette::now()
         ];
 
-        $update = DB::table('TABLENAME')->where('id', $id)->update($data);
+        $update = DB::table('sensors')->where('id', $id)->update($data);
         
         if ($update) {
             return Hermes::send($data, 200);
