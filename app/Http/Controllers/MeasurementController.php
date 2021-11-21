@@ -18,6 +18,53 @@ class MeasurementController extends Controller
         }
         $query = DB::table('measurement');
 
+        if ($request->name) {
+            $query->where('name', 'like', '%'.$request->name.'%');
+        }
+        if ($request->description) {
+            $query->where('description', 'like', '%'.$request->description.'%');
+        }
+        if ($request->mix) {
+            $query->where('mix', $request->mix);
+        }
+        if ($request->sensor) {
+            $query->where('sensor', $request->sensor);
+        }
+        if ($request->max_temp) {
+            $query->where('max_temp', $request->max_temp);
+        }
+        if ($request->min_temp) {
+            $query->where('min_temp', $request->min_temp);
+        }
+        if ($request->last_temp) {
+            $query->where('last_temp', $request->last_temp);
+        }
+        if ($request->readed_max) {
+            $query->where('readed_max', $request->readed_max);
+        }
+        if ($request->readed_min) {
+            $query->where('readed_min', $request->readed_min);
+        }
+        if ($request->started_at) {
+            $query->where('started_at', $request->started_at);
+        }
+        if ($request->ended_at) {
+            $query->where('ended_at', $request->ended_at);
+        }
+        if ($request->deployed_at) {
+            $query->where('deployed_at', $request->deployed_at);
+        }
+        if ($request->last_data_at) {
+            $query->where('last_data_at', $request->last_data_at);
+        }
+        if ($request->created_at) {
+            $query->where('created_at', $request->created_at);
+        }
+        
+        $query->join('mix','mix.id','=','measurement.mix');
+        $query->join('sensors','sensors.id','=','measurement.sensor');
+        $query->select('measurement.*', 'mix.title as mixTitle', 'sensors.title as sesnorsTitle');
+
         $data = $query->get();
 
         if ($data) {

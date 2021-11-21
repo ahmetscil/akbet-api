@@ -16,9 +16,24 @@ class LogController extends Controller
         if (!$this->controlUser('log', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
-        $query = DB::table('log');
 
-        $data = $query->get();
+        $offset = $request->offset ? $request->offset : 0;
+        $limit = $request->limit ? $request->limit : 250;
+
+        $query = DB::table('log');
+        if ($request->operation) {
+            $query->where('operation', 'like', '%'.$request->operation.'%');
+        }
+        if ($request->info) {
+            $query->where('info', 'like', '%'.$request->info.'%');
+        }
+
+        $query->join('users','users.id','=','log.user');
+        $query->join('companies','companies.id','=','log.company');
+        $query->join('projects','projects.id','=','log.project');
+        $query->select('log.*', 'users.name as userName', 'companies.title as companyName', 'projects.title as projectName');
+
+        $data = $query->offset($offset)->limit($limit)->get();
 
         if ($data) {
             return Hermes::send($data, 200);
@@ -51,7 +66,7 @@ class LogController extends Controller
             'created_at' => Pariette::now()
         ];
 
-        $work = DB::table('log')->insertGetId($data);
+        $work = DB::table('log')->insert($data);
         if ($work) {
             return Hermes::send($work, 201);
         }

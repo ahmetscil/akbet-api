@@ -18,6 +18,19 @@ class DownlinkController extends Controller
         }
         $query = DB::table('downlink');
 
+        if ($request->measurement) {
+            $query->where('measurement', $request->measurement);
+        }
+        if ($request->DevEUI) {
+            $query->where('DevEUI', $request->DevEUI);
+        }
+        if ($request->payload_hex) {
+            $query->where('payload_hex', $request->payload_hex);
+        }
+
+        $query->join('measurement','measurement.id','=','downlink.measurement');
+        $query->select('downlink.*', 'measurement.name as measurement');
+
         $data = $query->get();
 
         if ($data) {

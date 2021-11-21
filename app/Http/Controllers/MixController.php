@@ -18,6 +18,38 @@ class MixController extends Controller
         }
         $query = DB::table('mix');
 
+        if ($request->user) {
+            $query->where('user', $request->user);
+        }
+        if ($request->project) {
+            $query->where('project', 'like', '%'.$request->project.'%');
+        }
+        if ($request->title) {
+            $query->where('title', 'like', '%'.$request->title.'%');
+        }
+        if ($request->description) {
+            $query->where('description', 'like', '%'.$request->description.'%');
+        }
+        if ($request->activation_energy) {
+            $query->where('activation_energy', $request->activation_energy);
+        }
+        if ($request->temperature) {
+            $query->where('temperature', $request->temperature);
+        }
+        if ($request->a) {
+            $query->where('a', $request->a);
+        }
+        if ($request->b) {
+            $query->where('b', $request->b);
+        }
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
+        $query->join('users','users.id','=','mix.user');
+        $query->join('projects','projects.id','=','mix.project');
+        $query->select('mix.*', 'users.name as userName', 'projects.title as projectName');
+
         $data = $query->get();
 
         if ($data) {

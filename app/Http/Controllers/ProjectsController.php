@@ -18,6 +18,46 @@ class ProjectsController extends Controller
         }
         $query = DB::table('projects');
 
+        if ($request->company) {
+            $query->where('company', $request->company);
+        }
+        if ($request->code) {
+            $query->where('code', $request->code);
+        }
+        if ($request->title) {
+            $query->where('title', 'like', '%'.$request->title.'%');
+        }
+        if ($request->description) {
+            $query->where('description', 'like', '%'.$request->description.'%');
+        }
+        if ($request->email) {
+            $query->where('email', $request->email);
+        }
+        if ($request->telephone) {
+            $query->where('telephone', $request->telephone);
+        }
+        if ($request->country) {
+            $query->where('country', $request->country);
+        }
+        if ($request->city) {
+            $query->where('city', $request->city);
+        }
+        if ($request->address) {
+            $query->where('address', $request->address);
+        }
+        if ($request->started_at) {
+            $query->where('started_at', $request->started_at);
+        }
+        if ($request->ended_at) {
+            $query->where('ended_at', $request->ended_at);
+        }
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
+        $query->join('companies','companies.id','=','projects.company');
+        $query->select('projects.*', 'companies.title as companName');
+
         $data = $query->get();
 
         if ($data) {

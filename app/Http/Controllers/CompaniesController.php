@@ -18,6 +18,30 @@ class CompaniesController extends Controller
         }
         $query = DB::table('companies');
 
+        if ($request->title) {
+            $query->where('title', 'like', '%'.$request->title.'%');
+        }
+        if ($request->email) {
+            $query->where('email', $request->email);
+        }
+        if ($request->telephone) {
+            $query->where('telephone', $request->telephone);
+        }
+        if ($request->country) {
+            $query->where('country', $request->country);
+        }
+        if ($request->city) {
+            $query->where('city', $request->city);
+        }
+        if ($request->address) {
+            $query->where('address', 'like', '%'.$request->address.'%');
+        }
+        if ($request->status) {
+            $query->where('status', $request->status);
+        } else {
+            $query->whereNotIn('status', [9, 0]);
+        }
+
         $data = $query->get();
 
         if ($data) {

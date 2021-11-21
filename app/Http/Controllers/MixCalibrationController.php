@@ -18,6 +18,19 @@ class MixCalibrationController extends Controller
         }
         $query = DB::table('mix_calibration');
 
+        if ($request->mix) {
+            $query->where('mix', $request->mix);
+        }
+        if ($request->days) {
+            $query->where('days', $request->days);
+        }
+        if ($request->strength) {
+            $query->where('strength', $request->strength);
+        }
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+
         $data = $query->get();
 
         if ($data) {

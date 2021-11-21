@@ -18,6 +18,31 @@ class SensorsController extends Controller
         }
         $query = DB::table('sensors');
 
+        if ($request->project) {
+            $query->where('project', $request->project);
+        }
+        if ($request->DevEUI) {
+            $query->where('DevEUI', $request->DevEUI);
+        }
+        if ($request->type) {
+            $query->where('type', $request->type);
+        }
+        if ($request->title) {
+            $query->where('title', 'like', '%'.$request->title.'%');
+        }
+        if ($request->description) {
+            $query->where('description', 'like', '%'.$request->description.'%');
+        }
+        if ($request->status) {
+            $query->where('status', $request->status);
+        }
+        if ($request->created_at) {
+            $query->where('created_at', $request->created_at);
+        }
+
+        $query->join('users','users.id','=','sensors.user');
+        $query->select('sensors.*', 'users.name as userName');
+
         $data = $query->get();
 
         if ($data) {

@@ -18,6 +18,13 @@ class UplinkController extends Controller
         }
         $query = DB::table('uplink');
 
+        if ($request->search) {
+            $query->where('DevEUI', $request->search);
+        }
+
+        $query->join('measurement','measurement.id','=','downlink.measurement');
+        $query->select('uplink.*', 'measurement.name as measurement');
+
         $data = $query->get();
 
         if ($data) {
@@ -29,42 +36,63 @@ class UplinkController extends Controller
 
     public function store(Request $request)
     {
-        if (!$this->controlUser($request->store, 'uplink', 'create')) {
-            return Hermes::send('lng_0002', 401);
-        }
-
         $validator = Validator::make($request->all(), [
-            'measurement' => 'required',
-            'DevEUI' => 'required',
-            'payload_hex' => 'required',
-            'LrrRSSI' => 'required',
-            'LrrSNR' => 'required',
-            'temperature' => 'required',
-            'maturity' => 'required',
-            'strength' => 'required'
+            'DevEUI_uplink' => 'required'
         ]);
 
         if ($validator->fails()) {
             return Hermes::send($validator->messages(), 403);
         }
 
-        $data = [
-            'measurement' => $request->measurement,
-            'DevEUI' => $request->DevEUI,
-            'payload_hex' => $request->payload_hex,
-            'LrrRSSI' => $request->LrrRSSI,
-            'LrrSNR' => $request->LrrSNR,
-            'temperature' => $request->temperature,
-            'maturity' => $request->maturity,
-            'strength' => $request->strength,
-            'created_at' => Pariette::now()
-        ];
-
-        $work = DB::table('uplink')->insertGetId($data);
-        if ($work) {
-            return Hermes::send($work, 201);
+        function hex_to_string($hex) {
+            if (strlen($hex) % 2 != 0) {
+                throw new Exception('String length must be an even number.', 1);
+            }
+            $string = '';
+            for ($i = 0; $i < strlen($hex) - 1; $i += 2) {
+                $string .= chr(hexdec($hex[$i].$hex[$i+1]));
+            }
+            return $string;
         }
-        return Hermes::send('lng_0003', 204);
+
+        $datas = $request->json()->get('DevEUI_uplink');;
+        $DevEUI = $datas['DevEUI'];
+        $device = DB::table('sensors')->where('DevEUI',$DevEUI)->first();
+
+        if ($device) {
+            $uplinkHex = $datas['payload_hex'];
+            $splitQuery = explode(' ', hex_to_string($uplinkHex));
+            $temp = explode('=',$splitQuery[0]);
+            $deviceTemp = $temp[1]; // burası çok önemli!!
+            $createdAt = Pariette::now();
+
+            $work = DB::table('uplink')->insert([
+                'DevEUI' => $datas['DevEUI'],
+                'payload_hex' => $datas['payload_hex'],
+                'LrrRSSI' => $datas['LrrRSSI'],
+                'LrrSNR' => $datas['LrrSNR'],
+                'temperature' => $deviceTemp,
+                'maturity' => rand(10,100),
+                'created_at' => $createdAt
+            ]);
+
+            if ($work) {
+                $devUpdt = array();
+                if($device->readed_max >= $deviceTemp) {
+                    $devUpdt['readed_max'] = $deviceTemp;
+                }
+                if($device->readed_min <= $deviceTemp) {
+                    $devUpdt['readed_min'] = $deviceTemp;
+                }
+                $devUpdt['last_data_at'] = $createdAt;
+
+                DB::table('DevEUI')->where('deveui',$DevEUI)->update($devUpdt);
+
+                return Hermes::send($work, 201);
+            } else {
+                return Hermes::send('lng_0003', 204);
+            }
+        }
     }
 
     public function show($id)

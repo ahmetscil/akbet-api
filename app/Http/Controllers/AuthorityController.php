@@ -18,6 +18,21 @@ class AuthorityController extends Controller
         }
         $query = DB::table('authority');
 
+        if ($request->user) {
+            $query->where('user', $request->user);
+        }
+        if ($request->company) {
+            $query->where('company', $request->company);
+        }
+        if ($request->project) {
+            $query->where('project', $request->project);
+        }
+
+        $query->join('users','users.id','=','authority.user');
+        $query->join('companies','companies.id','=','authority.company');
+        $query->join('projects','projects.id','=','authority.project');
+        $query->select('authority.*', 'users.name as userName', 'companies.title as companyName', 'projects.title as projectName');
+
         $data = $query->get();
 
         if ($data) {
@@ -71,7 +86,6 @@ class AuthorityController extends Controller
         return Hermes::send($data, 200);
     }
 
-
     public function update(Request $request, $id)
     {
         if (!$this->controlUser('authority', 'update')) {
@@ -107,8 +121,7 @@ class AuthorityController extends Controller
             return Hermes::send($data, 200);
         }
         return Hermes::send('lng_0004', 204);
-    }
-    
+    }    
 
     public function destroy($id)
     {
