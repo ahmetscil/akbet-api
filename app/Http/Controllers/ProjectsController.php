@@ -13,7 +13,7 @@ class ProjectsController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser('projects', 'read')) {
+        if (!$this->controlUser($request->store, 'projects', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
         $query = DB::table('projects');
@@ -73,27 +73,27 @@ class ProjectsController extends Controller
             return Hermes::send('lng_0002', 401);
         }
 
-        $validator = Validator::make($request->all(), [
-            'company' => 'required',
-            'code' => 'required',
-            'title' => 'required',
-            'description' => 'required',
-            'email_title' => 'required',
-            'email' => 'required',
-            'telephone_title' => 'required',
-            'telephone' => 'required',
-            'country' => 'required',
-            'city' => 'required',
-            'address' => 'required',
-            'logo' => 'required',
-            'started_at' => 'required',
-            'ended_at' => 'required',
-            'status' => 'required'
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'company' => 'required',
+        //     'code' => 'required',
+        //     'title' => 'required',
+        //     'description' => 'required',
+        //     'email_title' => 'required',
+        //     'email' => 'required',
+        //     'telephone_title' => 'required',
+        //     'telephone' => 'required',
+        //     'country' => 'required',
+        //     'city' => 'required',
+        //     'address' => 'required',
+        //     'logo' => 'required',
+        //     'started_at' => 'required',
+        //     'ended_at' => 'required',
+        //     'status' => 'required'
+        // ]);
 
-        if ($validator->fails()) {
-            return Hermes::send($validator->messages(), 403);
-        }
+        // if ($validator->fails()) {
+        //     return Hermes::send($validator->messages(), 403);
+        // }
 
         $data = [
             'company' => $request->company,

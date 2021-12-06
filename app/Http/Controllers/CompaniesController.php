@@ -13,7 +13,7 @@ class CompaniesController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser('companies', 'read')) {
+        if (!$this->controlUser($request->store, 'companies', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
         $query = DB::table('companies');
@@ -57,22 +57,22 @@ class CompaniesController extends Controller
             return Hermes::send('lng_0002', 401);
         }
 
-        $validator = Validator::make($request->all(), [
-            'title' => 'required',
-            'email_title' => 'required',
-            'email' => 'required',
-            'telephone_title' => 'required',
-            'telephone' => 'required',
-            'country' => 'required',
-            'city' => 'required',
-            'address' => 'required',
-            'logo' => 'required',
-            'status' => 'required'
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'title' => 'required',
+        //     'email_title' => 'required',
+        //     'email' => 'required',
+        //     'telephone_title' => 'required',
+        //     'telephone' => 'required',
+        //     'country' => 'required',
+        //     'city' => 'required',
+        //     'address' => 'required',
+        //     'logo' => 'required',
+        //     'status' => 'required'
+        // ]);
 
-        if ($validator->fails()) {
-            return Hermes::send($validator->messages(), 403);
-        }
+        // if ($validator->fails()) {
+        //     return Hermes::send($validator->messages(), 403);
+        // }
 
         $data = [
             'title' => $request->title,

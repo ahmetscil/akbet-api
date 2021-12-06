@@ -13,7 +13,7 @@ class SensorsController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser('sensors', 'read')) {
+        if (!$this->controlUser($request->store, 'sensors', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
         $query = DB::table('sensors');
@@ -40,9 +40,6 @@ class SensorsController extends Controller
             $query->where('created_at', $request->created_at);
         }
 
-        $query->join('users','users.id','=','sensors.user');
-        $query->select('sensors.*', 'users.name as userName');
-
         $data = $query->get();
 
         if ($data) {
@@ -58,18 +55,18 @@ class SensorsController extends Controller
             return Hermes::send('lng_0002', 401);
         }
 
-        $validator = Validator::make($request->all(), [
-            'project' => 'required',
-            'DevEUI' => 'required',
-            'type' => 'required',
-            'title' => 'required',
-            'description' => 'required',
-            'status' => 'required'
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'project' => 'required',
+        //     'DevEUI' => 'required',
+        //     'type' => 'required',
+        //     'title' => 'required',
+        //     'description' => 'required',
+        //     'status' => 'required'
+        // ]);
 
-        if ($validator->fails()) {
-            return Hermes::send($validator->messages(), 403);
-        }
+        // if ($validator->fails()) {
+        //     return Hermes::send($validator->messages(), 403);
+        // }
 
         $data = [
             'project' => $request->project,

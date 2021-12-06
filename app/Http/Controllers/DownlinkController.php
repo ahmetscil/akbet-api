@@ -13,7 +13,7 @@ class DownlinkController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser('downlink', 'read')) {
+        if (!$this->controlUser($request->store, 'downlink', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
         $query = DB::table('downlink');
@@ -46,14 +46,14 @@ class DownlinkController extends Controller
             return Hermes::send('lng_0002', 401);
         }
 
-        $validator = Validator::make($request->all(), [
-            'DevEUI' => 'required',
-            'payload_hex' => 'required'
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'DevEUI' => 'required',
+        //     'payload_hex' => 'required'
+        // ]);
 
-        if ($validator->fails()) {
-            return Hermes::send($validator->messages(), 403);
-        }
+        // if ($validator->fails()) {
+        //     return Hermes::send($validator->messages(), 403);
+        // }
 
         $data = [
             'measurement' => $request->measurement,

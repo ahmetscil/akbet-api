@@ -7,17 +7,17 @@ use App\Helpers\Pariette;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+
 
 class UsersController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser('users', 'read')) {
+        if (!$this->controlUser($request->store, 'users', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
 
-        $query = DB::table('users')->where();
+        $query = DB::table('users');
 
         if ($request->name) {
             $query->where('name', 'like', '%'.$request->name.'%');
@@ -47,18 +47,17 @@ class UsersController extends Controller
             return Hermes::send('Authorization Error', 401);
         }
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'request',
-            'email' => 'request',
-            'password' => 'request',
-            'status' => 'required'
-        ]);
+        // $validator = $request->validate([
+        //     'name' => 'required',
+        //     'email' => 'required',
+        //     'password' => 'required',
+        //     'status' => 'required'
+        // ]);
 
-        if ($validator->fails()) {
-            return Hermes::send($validator->messages(), 403);
-        }
+        // if ($validator['errors']) {
+        //     return Hermes::send($validator, 403);
+        // }
         
-
         $data = [
             'name' => $request->name,
             'email' => $request->email,
@@ -89,13 +88,13 @@ class UsersController extends Controller
         if (!$this->controlUser('users', 'update')) {
             return Hermes::send('Authorization Error', 401);
         }
-		$validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'email' => 'required',
-            'photo' => 'required',
-            'phone' => 'required',
-            'status' => 'required'
-        ]);
+		// $validator = Validator::make($request->all(), [
+        //     'name' => 'required',
+        //     'email' => 'required',
+        //     'photo' => 'required',
+        //     'phone' => 'required',
+        //     'status' => 'required'
+        // ]);
 		if ($validator->fails()) {
             return Hermes::send($validator->messages(), 403);
 		}

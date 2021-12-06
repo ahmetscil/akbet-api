@@ -13,7 +13,7 @@ class MixCalibrationController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser('mix_calibration', 'read')) {
+        if (!$this->controlUser($request->store, 'mix_calibration', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
         $query = DB::table('mix_calibration');
@@ -46,16 +46,16 @@ class MixCalibrationController extends Controller
             return Hermes::send('lng_0002', 401);
         }
 
-        $validator = Validator::make($request->all(), [
-            'mix' => 'required',
-            'days' => 'required',
-            'strength' => 'required',
-            'status' => 'required'
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'mix' => 'required',
+        //     'days' => 'required',
+        //     'strength' => 'required',
+        //     'status' => 'required'
+        // ]);
 
-        if ($validator->fails()) {
-            return Hermes::send($validator->messages(), 403);
-        }
+        // if ($validator->fails()) {
+        //     return Hermes::send($validator->messages(), 403);
+        // }
 
         $data = [
             'mix' => $request->mix,

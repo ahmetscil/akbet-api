@@ -13,7 +13,7 @@ class MixController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser('mix', 'read')) {
+        if (!$this->controlUser($request->store, 'mix', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
         $query = DB::table('mix');
@@ -65,21 +65,21 @@ class MixController extends Controller
             return Hermes::send('lng_0002', 401);
         }
 
-        $validator = Validator::make($request->all(), [
-            'user' => 'required',
-            'project' => 'required',
-            'title' => 'required',
-            'description' => 'required',
-            'activation_energy' => 'required',
-            'temperature' => 'required',
-            'a' => 'required',
-            'b' => 'required',
-            'status' => 'required'
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'user' => 'required',
+        //     'project' => 'required',
+        //     'title' => 'required',
+        //     'description' => 'required',
+        //     'activation_energy' => 'required',
+        //     'temperature' => 'required',
+        //     'a' => 'required',
+        //     'b' => 'required',
+        //     'status' => 'required'
+        // ]);
 
-        if ($validator->fails()) {
-            return Hermes::send($validator->messages(), 403);
-        }
+        // if ($validator->fails()) {
+        //     return Hermes::send($validator->messages(), 403);
+        // }
 
         $data = [
             'user' => $request->user,

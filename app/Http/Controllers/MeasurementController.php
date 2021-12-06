@@ -13,7 +13,7 @@ class MeasurementController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser('measurement', 'read')) {
+        if (!$this->controlUser($request->store, 'measurement', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
         $query = DB::table('measurement');
@@ -80,25 +80,25 @@ class MeasurementController extends Controller
             return Hermes::send('lng_0002', 401);
         }
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'description' => 'required',
-            'mix' => 'required',
-            'sensor' => 'required',
-            'max_temp' => 'required',
-            'min_temp' => 'required',
-            'last_temp' => 'required',
-            'readed_max' => 'required',
-            'readed_min' => 'required',
-            'started_at' => 'required',
-            'ended_at' => 'required',
-            'deployed_at' => 'required',
-            'last_data_at' => 'required'
-        ]);
+        // $validator = Validator::make($request->all(), [
+        //     'name' => 'required',
+        //     'description' => 'required',
+        //     'mix' => 'required',
+        //     'sensor' => 'required',
+        //     'max_temp' => 'required',
+        //     'min_temp' => 'required',
+        //     'last_temp' => 'required',
+        //     'readed_max' => 'required',
+        //     'readed_min' => 'required',
+        //     'started_at' => 'required',
+        //     'ended_at' => 'required',
+        //     'deployed_at' => 'required',
+        //     'last_data_at' => 'required'
+        // ]);
 
-        if ($validator->fails()) {
-            return Hermes::send($validator->messages(), 403);
-        }
+        // if ($validator->fails()) {
+        //     return Hermes::send($validator->messages(), 403);
+        // }
 
         $data = [
             'name' => $request->name,
