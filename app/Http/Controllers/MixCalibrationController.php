@@ -61,7 +61,7 @@ class MixCalibrationController extends Controller
             'mix' => $request->mix,
             'days' => $request->days,
             'strength' => $request->strength,
-            'status' => $request->status,
+            'status' => $request->status ? $request->status : 1,
             'created_at' => Pariette::now()
         ];
 

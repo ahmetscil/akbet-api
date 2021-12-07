@@ -23,7 +23,7 @@ class CreateUplinkTable extends Migration
             $table->string('LrrSNR');
             $table->string('temperature');
             $table->string('maturity');
-            $table->string('strength');
+            $table->string('strength')->nullable();
             $table->timestamps();
         });
     }

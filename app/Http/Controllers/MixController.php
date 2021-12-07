@@ -90,7 +90,7 @@ class MixController extends Controller
             'temperature' => $request->temperature,
             'a' => $request->a,
             'b' => $request->b,
-            'status' => $request->status,
+            'status' => $request->status ? $request->status : 1,
             'created_at' => Pariette::now()
         ];
 

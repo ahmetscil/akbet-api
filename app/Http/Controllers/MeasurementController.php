@@ -63,7 +63,7 @@ class MeasurementController extends Controller
         
         $query->join('mix','mix.id','=','measurement.mix');
         $query->join('sensors','sensors.id','=','measurement.sensor');
-        $query->select('measurement.*', 'mix.title as mixTitle', 'sensors.title as sesnorsTitle');
+        $query->select('measurement.*', 'mix.title as mixTitle', 'sensors.title as sensorsTitle');
 
         $data = $query->get();
 
@@ -110,10 +110,10 @@ class MeasurementController extends Controller
             'last_temp' => $request->last_temp,
             'readed_max' => $request->readed_max,
             'readed_min' => $request->readed_min,
-            'started_at' => $request->started_at,
-            'ended_at' => $request->ended_at,
-            'deployed_at' => $request->deployed_at,
-            'last_data_at' => $request->last_data_at,
+            'started_at' => date("y-m-d H:i:s", strtotime($request->started_at)),
+            'ended_at' => date("y-m-d H:i:s", strtotime($request->ended_at)),
+            'deployed_at' => date("y-m-d H:i:s", strtotime($request->deployed_at)),
+            'last_data_at' => date("y-m-d H:i:s", strtotime($request->last_data_at)),
             'created_at' => Pariette::now()
         ];
 
