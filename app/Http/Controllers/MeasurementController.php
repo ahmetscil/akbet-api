@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Helpers\Hermes;
 use App\Helpers\Pariette;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -64,7 +63,7 @@ class MeasurementController extends Controller
         $query->join('mix','mix.id','=','measurement.mix');
         $query->join('sensors','sensors.id','=','measurement.sensor');
         $query->select('measurement.*', 'mix.title as mixTitle', 'sensors.title as sensorsTitle');
-
+        $query->orderBy('id', 'DESC');
         $data = $query->get();
 
         if ($data) {

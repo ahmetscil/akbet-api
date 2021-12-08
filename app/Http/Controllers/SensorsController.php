@@ -74,7 +74,7 @@ class SensorsController extends Controller
             'type' => $request->type,
             'title' => $request->title,
             'description' => $request->description,
-            'status' => $request->status,
+            'status' => $request->status ? $request->status : 1,
             'created_at' => Pariette::now()
         ];
 
