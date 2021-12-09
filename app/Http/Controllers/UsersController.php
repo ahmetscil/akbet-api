@@ -65,7 +65,7 @@ class UsersController extends Controller
             'phone' => $request->phone,
             'ip' => Pariette::getIp(),
             'password' => Pariette::hash($request->password),
-            'status' => $request->status,
+            'status' => $request->status ? $request->status : 1,
             'created_at' => Pariette::now()
         ];
 

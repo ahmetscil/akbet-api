@@ -16,6 +16,7 @@ use App\Http\Controllers\ProjectsController;
 use App\Http\Controllers\SensorsController;
 use App\Http\Controllers\UplinkController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\LookupController;
 
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::post('login', [AuthController::class, 'login']);
@@ -40,4 +41,5 @@ Route::group(['middleware' => ['jwt.verify']], function() {
     Route::apiResource('Sensors', SensorsController::class);
     Route::apiResource('Uplink', UplinkController::class);
     Route::apiResource('Users', UsersController::class);
+    Route::apiResource('Lookup', LookupController::class);
 });

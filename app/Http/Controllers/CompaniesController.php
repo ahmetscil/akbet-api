@@ -84,7 +84,7 @@ class CompaniesController extends Controller
             'city' => $request->city,
             'address' => $request->address,
             'logo' => $request->logo,
-            'status' => $request->status,
+            'status' => $request->status ? $request->status : 1,
             'created_at' => Pariette::now()
         ];
 

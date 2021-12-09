@@ -110,7 +110,7 @@ class ProjectsController extends Controller
             'logo' => $request->logo,
             'started_at' => $request->started_at,
             'ended_at' => $request->ended_at,
-            'status' => $request->status,
+            'status' => $request->status ? $request->status : 1,
             'created_at' => Pariette::now()
         ];
 

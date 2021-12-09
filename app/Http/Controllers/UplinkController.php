@@ -13,7 +13,7 @@ class UplinkController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser('uplink', 'read')) {
+        if (!$this->controlUser($request->store, 'uplink', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
         $query = DB::table('uplink');
@@ -21,9 +21,6 @@ class UplinkController extends Controller
         if ($request->search) {
             $query->where('DevEUI', $request->search);
         }
-
-        $query->join('measurement','measurement.id','=','downlink.measurement');
-        $query->select('uplink.*', 'measurement.name as measurement');
 
         $data = $query->get();
 

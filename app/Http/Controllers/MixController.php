@@ -82,7 +82,7 @@ class MixController extends Controller
         // }
 
         $data = [
-            'user' => $request->user,
+            'user' => Pariette::user(),
             'project' => $request->project,
             'title' => $request->title,
             'description' => $request->description,
@@ -129,7 +129,7 @@ class MixController extends Controller
 		}
     
         $data = [
-            'user' => $request->user,
+            'user' => Pariette::user(),
             'project' => $request->project,
             'title' => $request->title,
             'description' => $request->description,
