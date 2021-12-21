@@ -59,6 +59,9 @@ class MeasurementController extends Controller
         if ($request->created_at) {
             $query->where('created_at', $request->created_at);
         }
+        if ($request->last_mail_sended_at) {
+            $query->where('last_mail_sended_at', $request->last_mail_sended_at);
+        }
         
         $query->join('mix','mix.id','=','measurement.mix');
         $query->join('sensors','sensors.id','=','measurement.sensor');
@@ -168,6 +171,7 @@ class MeasurementController extends Controller
             'ended_at' => $request->ended_at,
             'deployed_at' => $request->deployed_at,
             'last_data_at' => $request->last_data_at,
+            'last_mail_sended_at' => $request->last_mail_sended_at,
             'updated_at' => Pariette::now()
         ];
 

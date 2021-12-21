@@ -36,6 +36,9 @@ class SensorsController extends Controller
         if ($request->status) {
             $query->where('status', $request->status);
         }
+        if ($request->sensor_no) {
+            $query->where('sensor_no', $request->sensor_no);
+        }
         if ($request->created_at) {
             $query->where('created_at', $request->created_at);
         }
@@ -75,6 +78,7 @@ class SensorsController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'status' => $request->status ? $request->status : 1,
+            'sensor_no' => $request->sensor_no,
             'created_at' => Pariette::now()
         ];
 
@@ -115,6 +119,7 @@ class SensorsController extends Controller
             'type' => $request->type,
             'title' => $request->title,
             'description' => $request->description,
+            'sensor_no' => $request->sensor_no,
             'status' => $request->status,
             'updated_at' => Pariette::now()
         ];
