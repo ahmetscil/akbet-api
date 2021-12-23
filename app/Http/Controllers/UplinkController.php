@@ -83,7 +83,7 @@ class UplinkController extends Controller
                 }
                 $devUpdt['last_data_at'] = $createdAt;
 
-                DB::table('DevEUI')->where('deveui',$DevEUI)->update($devUpdt);
+                DB::table('measurement')->where('id',$DevEUI)->update($devUpdt);
 
                 return Hermes::send($work, 201);
             } else {
@@ -94,7 +94,11 @@ class UplinkController extends Controller
 
     public function show($id)
     {
-        $data = DB::table('uplink')->find($id);
+        $data = DB::table('uplink')
+            ->where('uplink.DevEUI', $id)
+            ->offset(0)
+            ->limit(10)
+            ->get();
         return Hermes::send($data, 200);
     }
 
