@@ -27,7 +27,8 @@ class MeasurementController extends Controller
             $query->where('mix', $request->mix);
         }
         if ($request->sensor) {
-            $query->where('sensor', $request->sensor);
+            $sensor = DB::table('sensors')->where('id', $request->sensor)->first();
+            $query->where('sensor', $sensor->id);
         }
         if ($request->max_temp) {
             $query->where('max_temp', $request->max_temp);
@@ -65,7 +66,7 @@ class MeasurementController extends Controller
         
         $query->join('mix','mix.id','=','measurement.mix');
         $query->join('sensors','sensors.id','=','measurement.sensor');
-        $query->select('measurement.*', 'mix.title as mixTitle', 'sensors.title as sensorsTitle');
+        $query->select('measurement.*', 'mix.title as mixTitle', 'sensors.title as sensorsTitle', 'sensors.DevEUI');
         $query->orderBy('id', 'DESC');
         $data = $query->get();
 

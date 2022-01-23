@@ -94,12 +94,15 @@ class UplinkController extends Controller
 
     public function show(Request $request, $storeToken, $id)
     {
-        $uplinkdata = DB::table('uplink')
+        $query = DB::table('uplink')
             ->where('uplink.DevEUI', $id)
             ->offset(0)
             ->limit($request->limit)
-            ->orderBy('id', 'DESC')
-            ->get();
+            ->orderBy('id', 'DESC');
+        if ($request->measurement) {
+            $query->where('measurement', $request->measurement);
+        }
+        $uplinkdata = $query->get();
         $sensor = DB::table('sensors')->where('DevEUI', $id)->first();
         $project = DB::table('projects')->where('id', $sensor->project)->first();
         $data = [
