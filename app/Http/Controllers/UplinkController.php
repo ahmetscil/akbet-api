@@ -11,11 +11,11 @@ use Illuminate\Support\Facades\Validator;
 
 class UplinkController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, $storeToken)
     {
-        if (!$this->controlUser($request->store, 'uplink', 'read')) {
-            return Hermes::send('lng_0002', 401);
-        }
+        // if (!$this->controlUser($request->store, 'uplink', 'read')) {
+        //     return Hermes::send('lng_0002', 401);
+        // }
         $query = DB::table('uplink');
 
         if ($request->search) {
@@ -31,7 +31,7 @@ class UplinkController extends Controller
         return Hermes::send('lng_0001', 404);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $storeToken)
     {
         $validator = Validator::make($request->all(), [
             'DevEUI_uplink' => 'required'
@@ -92,18 +92,26 @@ class UplinkController extends Controller
         }
     }
 
-    public function show($id)
+    public function show(Request $request, $storeToken, $id)
     {
-        $data = DB::table('uplink')
+        $uplinkdata = DB::table('uplink')
             ->where('uplink.DevEUI', $id)
             ->offset(0)
-            ->limit(10)
+            ->limit($request->limit)
+            ->orderBy('id', 'DESC')
             ->get();
+        $sensor = DB::table('sensors')->where('DevEUI', $id)->first();
+        $project = DB::table('projects')->where('id', $sensor->project)->first();
+        $data = [
+            'uplinkdata' => $uplinkdata,
+            'sensor' => $sensor,
+            'project' => $project
+        ];
         return Hermes::send($data, 200);
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $storeToken, $id)
     {
         if (!$this->controlUser('uplink', 'update')) {
             return Hermes::send('lng_0002', 401);
