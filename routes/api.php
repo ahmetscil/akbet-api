@@ -26,20 +26,20 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
 });
 
 Route::prefix('{storeToken}')->group(function () {
-});
-Route::group(['middleware' => ['jwt.verify']], function() {
-    Route::apiResource('Auth', AuthController::class);
-    Route::apiResource('Authority', AuthorityController::class);
-    Route::apiResource('Companies', CompaniesController::class);
-    Route::apiResource('Downlink', DownlinkController::class);
-    Route::apiResource('Galleries', GalleriesController::class);
-    Route::apiResource('Log', LogController::class);
-    Route::apiResource('Measurement', MeasurementController::class);
-    Route::apiResource('MixCalibration', MixCalibrationController::class);
-    Route::apiResource('Mix', MixController::class);
-    Route::apiResource('Projects', ProjectsController::class);
-    Route::apiResource('Sensors', SensorsController::class);
-    Route::apiResource('Uplink', UplinkController::class);
-    Route::apiResource('Users', UsersController::class);
-    Route::apiResource('Lookup', LookupController::class);
+    Route::group(['middleware' => ['jwt.verify']], function() {
+        Route::apiResource('Auth', AuthController::class);
+        Route::apiResource('Authority', AuthorityController::class);
+        Route::apiResource('Companies', CompaniesController::class);
+        Route::apiResource('Downlink', DownlinkController::class);
+        Route::apiResource('Galleries', GalleriesController::class);
+        Route::apiResource('Log', LogController::class);
+        Route::apiResource('Measurement', MeasurementController::class);
+        Route::apiResource('MixCalibration', MixCalibrationController::class);
+        Route::apiResource('Mix', MixController::class);
+        Route::apiResource('Projects', ProjectsController::class);
+        Route::apiResource('Sensors', SensorsController::class);
+        Route::apiResource('Uplink', UplinkController::class);
+        Route::apiResource('Users', UsersController::class);
+        Route::apiResource('Lookup', LookupController::class);
+    });
 });

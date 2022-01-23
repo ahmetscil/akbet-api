@@ -11,16 +11,14 @@ use Illuminate\Support\Facades\Validator;
 
 class ProjectsController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, $storeToken)
     {
         if (!$this->controlUser($request->store, 'projects', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
         $query = DB::table('projects');
 
-        if ($request->company) {
-            $query->where('company', $request->company);
-        }
+        $query->where('company', Pariette::company($storeToken, 'id'));
         if ($request->code) {
             $query->where('code', $request->code);
         }
@@ -61,7 +59,7 @@ class ProjectsController extends Controller
         $data = $query->get();
 
         if ($data) {
-            return Hermes::send($data, 200);
+            return Hermes::send($data, 200, Pariette::company($storeToken));
         }
         
         return Hermes::send('lng_0001', 404);
@@ -121,7 +119,7 @@ class ProjectsController extends Controller
         return Hermes::send('lng_0003', 204);
     }
 
-    public function show($id)
+    public function show($storeToken, $id)
     {
         $data = DB::table('projects')->find($id);
         return Hermes::send($data, 200);

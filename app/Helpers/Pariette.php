@@ -5,7 +5,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redis;
+// use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Hash;
@@ -65,22 +65,31 @@ class Pariette {
 		return Str::random($key);
 	}
 
-	public static function redis ($key) {
-		$redis = Redis::connection();
-		return json_decode($redis->get($key), true);
+	public static function company ($key, $w = null) {
+		$c = DB::table('companies')->where('token', $key)->first();
+		if ($w) {
+			return $c->$w;
+		} else {
+			return $c;
+		}
 	}
 
-	public static function redisSet ($key, $val) {
-		$redis = Redis::connection();
-		$redis->set($key, json_encode($val));
-		return true;
-	}
+	// public static function redis ($key) {
+	// 	$redis = Redis::connection();
+	// 	return json_decode($redis->get($key), true);
+	// }
 
-	public static function redisDel ($key) {
-		$redis = Redis::connection();
-		$redis->del($key);
-		return true;
-	}
+	// public static function redisSet ($key, $val) {
+	// 	$redis = Redis::connection();
+	// 	$redis->set($key, json_encode($val));
+	// 	return true;
+	// }
+
+	// public static function redisDel ($key) {
+	// 	$redis = Redis::connection();
+	// 	$redis->del($key);
+	// 	return true;
+	// }
 
 	public static function getIp() {
     foreach (array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR') as $key){

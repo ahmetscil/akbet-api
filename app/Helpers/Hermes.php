@@ -3,7 +3,6 @@
 namespace App\Helpers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -11,7 +10,6 @@ use Illuminate\Support\Carbon;
 class Hermes {
 	public static function send($data, $code, $info = null, $key = null): array
 	{
-		$redis = Redis::connection();
 		$res = [];
 		$res['code'] = $code;
 		if ($info) {

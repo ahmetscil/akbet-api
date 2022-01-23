@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class SensorsController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, $storeToken)
     {
         if (!$this->controlUser($request->store, 'sensors', 'read')) {
             return Hermes::send('lng_0002', 401);
@@ -52,7 +52,7 @@ class SensorsController extends Controller
         return Hermes::send('lng_0001', 404);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $storeToken)
     {
         if (!$this->controlUser($request->store, 'sensors', 'create')) {
             return Hermes::send('lng_0002', 401);
@@ -89,14 +89,14 @@ class SensorsController extends Controller
         return Hermes::send('lng_0003', 204);
     }
 
-    public function show($id)
+    public function show($storeToken, $id)
     {
         $data = DB::table('sensors')->find($id);
         return Hermes::send($data, 200);
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $storeToken, $id)
     {
         if (!$this->controlUser('sensors', 'update')) {
             return Hermes::send('lng_0002', 401);
