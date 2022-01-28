@@ -10,9 +10,14 @@ use Illuminate\Support\Facades\Validator;
 
 class MeasurementController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, $storeToken)
     {
-        if (!$this->controlUser($request->store, 'measurement', 'read')) {
+        if ($request->store) {
+            $store = $request->store;
+        } else {
+            $store = $storeToken;
+        }
+        if (!$this->controlUser($store, 'measurement', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
         $query = DB::table('measurement');
@@ -77,9 +82,14 @@ class MeasurementController extends Controller
         return Hermes::send('lng_0001', 404);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $storeToken)
     {
-        if (!$this->controlUser($request->store, 'measurement', 'create')) {
+        if ($request->store) {
+            $store = $request->store;
+        } else {
+            $store = $storeToken;
+        }
+        if (!$this->controlUser($store, 'measurement', 'create')) {
             return Hermes::send('lng_0002', 401);
         }
 
@@ -127,16 +137,21 @@ class MeasurementController extends Controller
         return Hermes::send('lng_0003', 204);
     }
 
-    public function show($id)
+    public function show($storeToken, $id)
     {
         $data = DB::table('measurement')->find($id);
         return Hermes::send($data, 200);
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $storeToken, $id)
     {
-        if (!$this->controlUser('measurement', 'update')) {
+        if ($request->store) {
+            $store = $request->store;
+        } else {
+            $store = $storeToken;
+        }
+        if (!$this->controlUser($store, 'measurement', 'update')) {
             return Hermes::send('lng_0002', 401);
         }
 		$validator = Validator::make($request->all(), [

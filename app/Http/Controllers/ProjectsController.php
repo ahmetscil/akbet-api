@@ -13,12 +13,21 @@ class ProjectsController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-        if (!$this->controlUser($request->store, 'projects', 'read')) {
+        if ($request->store) {
+            $store = $request->store;
+        } else {
+            $store = $storeToken;
+        }
+        if (!$this->controlUser($store, 'projects', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
         $query = DB::table('projects');
 
-        $query->where('company', Pariette::company($storeToken, 'id'));
+        if ($request->company) {
+            $query->where('company', $request->company);
+        } else {
+            $query->where('company', Pariette::company($storeToken, 'id'));
+        }
         if ($request->code) {
             $query->where('code', $request->code);
         }
@@ -126,13 +135,17 @@ class ProjectsController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $storeToken, $id)
     {
-        if (!$this->controlUser('projects', 'update')) {
+        if ($request->store) {
+            $store = $request->store;
+        } else {
+            $store = $storeToken;
+        }
+        if (!$this->controlUser($store, 'projects', 'update')) {
             return Hermes::send('lng_0002', 401);
         }
-		$validator = Validator::make($request->all(), [
-            'company' => 'required',
+        $validator = Validator::make($request->all(), [
             'code' => 'required',
             'title' => 'required',
             'description' => 'required',
@@ -152,24 +165,64 @@ class ProjectsController extends Controller
             return Hermes::send($validator->messages(), 403);
 		}
     
-        $data = [
-            'company' => $request->company,
-            'code' => $request->code,
-            'title' => $request->title,
-            'description' => $request->description,
-            'email_title' => $request->email_title,
-            'email' => $request->email,
-            'telephone_title' => $request->telephone_title,
-            'telephone' => $request->telephone,
-            'country' => $request->country,
-            'city' => $request->city,
-            'address' => $request->address,
-            'logo' => $request->logo,
-            'started_at' => $request->started_at,
-            'ended_at' => $request->ended_at,
-            'status' => $request->status,
-            'updated_at' => Pariette::now()
-        ];
+        $data = [];
+        if ($request->code) {
+            $data['code'] = $request->code;
+        }
+        
+        if ($request->title) {
+            $data['title'] = $request->title;
+        }
+        
+        if ($request->description) {
+            $data['description'] = $request->description;
+        }
+        
+        if ($request->email_title) {
+            $data['email_title'] = $request->email_title;
+        }
+        
+        if ($request->email) {
+            $data['email'] = $request->email;
+        }
+        
+        if ($request->telephone_title) {
+            $data['telephone_title'] = $request->telephone_title;
+        }
+        
+        if ($request->telephone) {
+            $data['telephone'] = $request->telephone;
+        }
+        
+        if ($request->country) {
+            $data['country'] = $request->country;
+        }
+        
+        if ($request->city) {
+            $data['city'] = $request->city;
+        }
+        
+        if ($request->address) {
+            $data['address'] = $request->address;
+        }
+        
+        if ($request->logo) {
+            $data['logo'] = $request->logo;
+        }
+        
+        if ($request->started_at) {
+            $data['started_at'] = $request->started_at;
+        }
+        
+        if ($request->ended_at) {
+            $data['ended_at'] = $request->ended_at;
+        }
+        
+        if ($request->status) {
+            $data['status'] = $request->status;
+        }
+        
+        $data['updated_at'] = Pariette::now();
 
         $update = DB::table('projects')->where('id', $id)->update($data);
         

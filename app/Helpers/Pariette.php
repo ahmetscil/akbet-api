@@ -67,7 +67,7 @@ class Pariette {
 
 	public static function company ($key, $w = null) {
 		$c = DB::table('companies')->where('token', $key)->first();
-		if ($w) {
+		if ($w != null) {
 			return $c->$w;
 		} else {
 			return $c;

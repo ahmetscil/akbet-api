@@ -11,9 +11,9 @@ use Illuminate\Support\Facades\Validator;
 
 class LookupController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, $storeToken)
     {
-        if (!$this->controlUser($request->store, 'lookup', 'read')) {
+        if (!$this->controlUser($storeToken, 'lookup', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
         $query = DB::table('lookup');
@@ -34,7 +34,7 @@ class LookupController extends Controller
         return Hermes::send('lng_0001', 404);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $storeToken)
     {
         if (!$this->controlUser($request->store, 'lookup', 'create')) {
             return Hermes::send('lng_0002', 401);
@@ -61,7 +61,7 @@ class LookupController extends Controller
         return Hermes::send('lng_0003', 204);
     }
 
-    public function show($id)
+    public function show($storeToken, $id)
     {
         $lookup = DB::table('lookup')->where('type', $id)->first();
         if ($lookup) {
@@ -74,7 +74,7 @@ class LookupController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $storeToken, $id)
     {
         // if (!$this->controlUser('lookup', 'update')) {
         //     return Hermes::send('lng_0002', 401);

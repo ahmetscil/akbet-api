@@ -95,22 +95,25 @@ class UplinkController extends Controller
     public function show(Request $request, $storeToken, $id)
     {
         $query = DB::table('uplink')
-            ->where('uplink.DevEUI', $id)
+            ->where('uplink.measurement', $id)
             ->offset(0)
             ->limit($request->limit)
             ->orderBy('id', 'DESC');
-        if ($request->measurement) {
-            $query->where('measurement', $request->measurement);
+        if ($request->DevEUI) {
+            $query->where('DevEUI', $request->DevEUI);
         }
         $uplinkdata = $query->get();
-        $sensor = DB::table('sensors')->where('DevEUI', $id)->first();
-        $project = DB::table('projects')->where('id', $sensor->project)->first();
-        $data = [
-            'uplinkdata' => $uplinkdata,
-            'sensor' => $sensor,
-            'project' => $project
-        ];
-        return Hermes::send($data, 200);
+        if (count($uplinkdata)) {
+            $sensor = DB::table('sensors')->where('DevEUI', $uplinkdata[0]->DevEUI)->first();
+            $project = DB::table('projects')->where('id', $sensor->project)->first();
+            $data = [
+                'uplinkdata' => $uplinkdata,
+                'sensor' => $sensor,
+                'project' => $project
+            ];
+            return Hermes::send($data, 200);
+        }
+        return Hermes::send('lng_0004', 204);
     }
 
 

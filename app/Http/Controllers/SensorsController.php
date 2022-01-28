@@ -13,7 +13,12 @@ class SensorsController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-        if (!$this->controlUser($request->store, 'sensors', 'read')) {
+        if ($request->store) {
+            $store = $request->store;
+        } else {
+            $store = $storeToken;
+        }
+        if (!$this->controlUser($store, 'sensors', 'read')) {
             return Hermes::send('lng_0002', 401);
         }
         $query = DB::table('sensors');
@@ -54,10 +59,15 @@ class SensorsController extends Controller
 
     public function store(Request $request, $storeToken)
     {
-        if (!$this->controlUser($request->store, 'sensors', 'create')) {
+        if ($request->store) {
+            $store = $request->store;
+        } else {
+            $store = $storeToken;
+        }
+        if (!$this->controlUser($store, 'sensors', 'create')) {
             return Hermes::send('lng_0002', 401);
         }
-
+    
         // $validator = Validator::make($request->all(), [
         //     'project' => 'required',
         //     'DevEUI' => 'required',
@@ -98,12 +108,15 @@ class SensorsController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
-        if (!$this->controlUser('sensors', 'update')) {
+        if ($request->store) {
+            $store = $request->store;
+        } else {
+            $store = $storeToken;
+        }
+        if (!$this->controlUser($store, 'sensors', 'update')) {
             return Hermes::send('lng_0002', 401);
         }
 		$validator = Validator::make($request->all(), [
-            'project' => 'required',
-            'DevEUI' => 'required',
             'type' => 'required',
             'title' => 'required',
             'description' => 'required',
@@ -113,16 +126,23 @@ class SensorsController extends Controller
             return Hermes::send($validator->messages(), 403);
 		}
     
-        $data = [
-            'project' => $request->project,
-            'DevEUI' => $request->DevEUI,
-            'type' => $request->type,
-            'title' => $request->title,
-            'description' => $request->description,
-            'sensor_no' => $request->sensor_no,
-            'status' => $request->status,
-            'updated_at' => Pariette::now()
-        ];
+        $data = [];
+        if ($request->type) {
+            $data['type'] = $request->type;
+        }
+        if ($request->title) {
+            $data['title'] = $request->title;
+        }
+        if ($request->description) {
+            $data['description'] = $request->description;
+        }
+        if ($request->sensor_no) {
+            $data['sensor_no'] = $request->sensor_no;
+        }
+        if ($request->status) {
+            $data['status'] = $request->status;
+        }
+        $data['updated_at'] = Pariette::now();
 
         $update = DB::table('sensors')->where('id', $id)->update($data);
         

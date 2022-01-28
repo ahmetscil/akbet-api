@@ -96,7 +96,7 @@ class CompaniesController extends Controller
         return Hermes::send('lng_0003', 204);
     }
 
-    public function show($id)
+    public function show($storeToken, $id)
     {
         $data = DB::table('companies')->find($id);
         return Hermes::send($data, 200);
@@ -105,7 +105,7 @@ class CompaniesController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
-        if (!$this->controlUser('companies', 'update')) {
+        if (!$this->controlUser($request->store, 'companies', 'update')) {
             return Hermes::send('lng_0002', 401);
         }
 		$validator = Validator::make($request->all(), [
