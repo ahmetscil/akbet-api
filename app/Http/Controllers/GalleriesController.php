@@ -13,9 +13,10 @@ class GalleriesController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser('galleries', 'read')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('galleries', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
+
         $query = DB::table('galleries');
 
         $data = $query->get();
@@ -29,8 +30,8 @@ class GalleriesController extends Controller
 
     public function store(Request $request)
     {
-        if (!$this->controlUser($request->store, 'galleries', 'create')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('galleries', 'create', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
 
         $validator = Validator::make($request->all(), [
@@ -58,6 +59,10 @@ class GalleriesController extends Controller
 
     public function show($id)
     {
+        if (Pariette::authRole('galleries', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         $data = DB::table('galleries')->find($id);
         return Hermes::send($data, 200);
     }
@@ -65,10 +70,11 @@ class GalleriesController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (!$this->controlUser('galleries', 'update')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('galleries', 'update', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
-		$validator = Validator::make($request->all(), [
+
+        $validator = Validator::make($request->all(), [
             'title' => 'required',
             'photo' => 'required'
         ]);
@@ -94,5 +100,8 @@ class GalleriesController extends Controller
 
     public function destroy($id)
     {
+        if (Pariette::authRole('galleries', 'delete', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
     }
 }

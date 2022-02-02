@@ -13,9 +13,10 @@ class DownlinkController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser($request->store, 'downlink', 'read')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('downlink', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
+
         $query = DB::table('downlink');
 
         if ($request->measurement) {
@@ -42,8 +43,8 @@ class DownlinkController extends Controller
 
     public function store(Request $request)
     {
-        if (!$this->controlUser($request->store, 'downlink', 'create')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('downlink', 'create', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
 
         // $validator = Validator::make($request->all(), [
@@ -71,6 +72,10 @@ class DownlinkController extends Controller
 
     public function show($id)
     {
+        if (Pariette::authRole('downlink', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         $data = DB::table('downlink')->find($id);
         return Hermes::send($data, 200);
     }
@@ -78,10 +83,11 @@ class DownlinkController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (!$this->controlUser('downlink', 'update')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('downlink', 'update', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
-		$validator = Validator::make($request->all(), [
+
+        $validator = Validator::make($request->all(), [
             'DevEUI' => 'required',
             'payload_hex' => 'required'
         ]);
@@ -107,5 +113,8 @@ class DownlinkController extends Controller
 
     public function destroy($id)
     {
+        if (Pariette::authRole('downlink', 'delete', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
     }
 }

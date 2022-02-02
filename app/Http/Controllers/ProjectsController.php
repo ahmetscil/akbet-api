@@ -13,14 +13,16 @@ class ProjectsController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
+        if (Pariette::authRole('projects', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         if ($request->store) {
             $store = $request->store;
         } else {
             $store = $storeToken;
         }
-        if (!$this->controlUser($store, 'projects', 'read')) {
-            return Hermes::send('lng_0002', 401);
-        }
+
         $query = DB::table('projects');
 
         if ($request->company) {
@@ -76,8 +78,8 @@ class ProjectsController extends Controller
 
     public function store(Request $request)
     {
-        if (!$this->controlUser($request->store, 'projects', 'create')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('projects', 'create', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
 
         // $validator = Validator::make($request->all(), [
@@ -130,6 +132,10 @@ class ProjectsController extends Controller
 
     public function show($storeToken, $id)
     {
+        if (Pariette::authRole('projects', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         $data = DB::table('projects')->find($id);
         return Hermes::send($data, 200);
     }
@@ -137,14 +143,16 @@ class ProjectsController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
+        if (Pariette::authRole('projects', 'update', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         if ($request->store) {
             $store = $request->store;
         } else {
             $store = $storeToken;
         }
-        if (!$this->controlUser($store, 'projects', 'update')) {
-            return Hermes::send('lng_0002', 401);
-        }
+
         $validator = Validator::make($request->all(), [
             'code' => 'required',
             'title' => 'required',
@@ -235,5 +243,8 @@ class ProjectsController extends Controller
 
     public function destroy($id)
     {
+        if (Pariette::authRole('projects', 'delete', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
     }
 }

@@ -16,6 +16,7 @@ use App\Http\Controllers\ProjectsController;
 use App\Http\Controllers\SensorsController;
 use App\Http\Controllers\UplinkController;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\NavigationController;
 use App\Http\Controllers\LookupController;
 
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
@@ -28,6 +29,7 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
 Route::prefix('{storeToken}')->group(function () {
     Route::group(['middleware' => ['jwt.verify']], function() {
         Route::apiResource('Auth', AuthController::class);
+        Route::apiResource('Navigation', NavigationController::class);
         Route::apiResource('Authority', AuthorityController::class);
         Route::apiResource('Companies', CompaniesController::class);
         Route::apiResource('Downlink', DownlinkController::class);

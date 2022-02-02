@@ -13,9 +13,10 @@ class CompaniesController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-        if (!$this->controlUser($request->store, 'companies', 'read')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('companies', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
+
         $query = DB::table('companies');
 
         if ($request->title) {
@@ -53,8 +54,8 @@ class CompaniesController extends Controller
 
     public function store(Request $request, $storeToken)
     {
-        if (!$this->controlUser($request->store, 'companies', 'create')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('companies', 'create', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
 
         // $validator = Validator::make($request->all(), [
@@ -98,6 +99,9 @@ class CompaniesController extends Controller
 
     public function show($storeToken, $id)
     {
+        if (Pariette::authRole('companies', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
         $data = DB::table('companies')->find($id);
         return Hermes::send($data, 200);
     }
@@ -105,8 +109,8 @@ class CompaniesController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
-        if (!$this->controlUser($request->store, 'companies', 'update')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('companies', 'update', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
 		$validator = Validator::make($request->all(), [
             'title' => 'required',
@@ -160,5 +164,8 @@ class CompaniesController extends Controller
 
     public function destroy($id)
     {
+        if (Pariette::authRole('companies', 'delete', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
     }
 }

@@ -13,9 +13,10 @@ class LookupController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-        if (!$this->controlUser($storeToken, 'lookup', 'read')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('lookup', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
+
         $query = DB::table('lookup');
 
         if ($request->type) {
@@ -36,8 +37,8 @@ class LookupController extends Controller
 
     public function store(Request $request, $storeToken)
     {
-        if (!$this->controlUser($request->store, 'lookup', 'create')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('lookup', 'create', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
 
         // $validator = Validator::make($request->all(), [
@@ -63,6 +64,10 @@ class LookupController extends Controller
 
     public function show($storeToken, $id)
     {
+        if (Pariette::authRole('lookup', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         $lookup = DB::table('lookup')->where('type', $id)->first();
         if ($lookup) {
             $lookup->items = DB::table('lookup_item')->where('lookup', $lookup->id)->get();
@@ -76,9 +81,10 @@ class LookupController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
-        // if (!$this->controlUser('lookup', 'update')) {
-        //     return Hermes::send('lng_0002', 401);
-        // }
+        if (Pariette::authRole('lookup', 'update', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         // $validator = Validator::make($request->all(), [
         //     'DevEUI' => 'required',
         //     'payload_hex' => 'required'
@@ -103,5 +109,8 @@ class LookupController extends Controller
 
     public function destroy($id)
     {
+        if (Pariette::authRole('lookup', 'delete', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
     }
 }

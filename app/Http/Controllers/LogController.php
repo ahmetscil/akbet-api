@@ -13,8 +13,8 @@ class LogController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser('log', 'read')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('log', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
 
         $offset = $request->offset ? $request->offset : 0;
@@ -44,8 +44,8 @@ class LogController extends Controller
 
     public function store(Request $request)
     {
-        if (!$this->controlUser($request->store, 'log', 'create')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('log', 'create', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
 
         $validator = Validator::make($request->all(), [
@@ -75,6 +75,10 @@ class LogController extends Controller
 
     public function show($id)
     {
+        if (Pariette::authRole('log', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         $data = DB::table('log')->find($id);
         return Hermes::send($data, 200);
     }
@@ -82,9 +86,10 @@ class LogController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (!$this->controlUser('log', 'update')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('log', 'update', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
+
 		$validator = Validator::make($request->all(), [
             'operation' => 'required',
             'info' => 'required'
@@ -113,5 +118,8 @@ class LogController extends Controller
 
     public function destroy($id)
     {
+        if (Pariette::authRole('log', 'delete', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
     }
 }

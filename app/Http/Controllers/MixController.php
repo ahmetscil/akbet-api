@@ -13,13 +13,14 @@ class MixController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
+        if (Pariette::authRole('mix', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         if ($request->store) {
             $store = $request->store;
         } else {
             $store = $storeToken;
-        }
-        if (!$this->controlUser($store, 'mix', 'read')) {
-            return Hermes::send('lng_0002', 401);
         }
         $query = DB::table('mix');
 
@@ -66,13 +67,14 @@ class MixController extends Controller
 
     public function store(Request $request)
     {
+        if (Pariette::authRole('mix', 'create', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         if ($request->store) {
             $store = $request->store;
         } else {
             $store = $storeToken;
-        }
-        if (!$this->controlUser($store, 'mix', 'create')) {
-            return Hermes::send('lng_0002', 401);
         }
 
         // $validator = Validator::make($request->all(), [
@@ -113,6 +115,10 @@ class MixController extends Controller
 
     public function show($storeToken, $id)
     {
+        if (Pariette::authRole('mix', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         $data = DB::table('mix')->find($id);
         return Hermes::send($data, 200);
     }
@@ -120,15 +126,16 @@ class MixController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
+        if (Pariette::authRole('mix', 'update', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         if ($request->store) {
             $store = $request->store;
         } else {
             $store = $storeToken;
         }
-        if (!$this->controlUser($store, 'mix', 'update')) {
-            return Hermes::send('lng_0002', 401);
-        }
-		$validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'title' => 'required',
             'description' => 'required',
             'activation_energy' => 'required',
@@ -176,5 +183,8 @@ class MixController extends Controller
 
     public function destroy($id)
     {
+        if (Pariette::authRole('mix', 'delete', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
     }
 }

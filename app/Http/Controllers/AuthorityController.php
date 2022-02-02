@@ -13,9 +13,10 @@ class AuthorityController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser('authority', 'read')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('authority', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
+
         $query = DB::table('authority');
 
         if ($request->user) {
@@ -44,8 +45,8 @@ class AuthorityController extends Controller
 
     public function store(Request $request)
     {
-        if (!$this->controlUser($request->store, 'authority', 'create')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('authority', 'create', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
 
         $validator = Validator::make($request->all(), [
@@ -82,16 +83,21 @@ class AuthorityController extends Controller
 
     public function show($id)
     {
+        if (Pariette::authRole('authority', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         $data = DB::table('authority')->find($id);
         return Hermes::send($data, 200);
     }
 
     public function update(Request $request, $id)
     {
-        if (!$this->controlUser('authority', 'update')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('authority', 'update', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
-		$validator = Validator::make($request->all(), [
+
+        $validator = Validator::make($request->all(), [
             'user' => 'required',
             'company' => 'required',
             'project' => 'required',
@@ -125,5 +131,8 @@ class AuthorityController extends Controller
 
     public function destroy($id)
     {
+        if (Pariette::authRole('authority', 'delete', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
     }
 }

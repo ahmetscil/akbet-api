@@ -13,14 +13,16 @@ class SensorsController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
+        if (Pariette::authRole('sensors', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         if ($request->store) {
             $store = $request->store;
         } else {
             $store = $storeToken;
         }
-        if (!$this->controlUser($store, 'sensors', 'read')) {
-            return Hermes::send('lng_0002', 401);
-        }
+
         $query = DB::table('sensors');
 
         if ($request->project) {
@@ -59,13 +61,14 @@ class SensorsController extends Controller
 
     public function store(Request $request, $storeToken)
     {
+        if (Pariette::authRole('sensors', 'create', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         if ($request->store) {
             $store = $request->store;
         } else {
             $store = $storeToken;
-        }
-        if (!$this->controlUser($store, 'sensors', 'create')) {
-            return Hermes::send('lng_0002', 401);
         }
     
         // $validator = Validator::make($request->all(), [
@@ -108,14 +111,16 @@ class SensorsController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
+        if (Pariette::authRole('sensors', 'update', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         if ($request->store) {
             $store = $request->store;
         } else {
             $store = $storeToken;
         }
-        if (!$this->controlUser($store, 'sensors', 'update')) {
-            return Hermes::send('lng_0002', 401);
-        }
+
 		$validator = Validator::make($request->all(), [
             'type' => 'required',
             'title' => 'required',
@@ -155,5 +160,8 @@ class SensorsController extends Controller
 
     public function destroy($id)
     {
+        if (Pariette::authRole('sensors', 'delete', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
     }
 }

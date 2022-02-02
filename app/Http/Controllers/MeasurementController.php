@@ -12,14 +12,16 @@ class MeasurementController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
+        if (Pariette::authRole('measurement', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         if ($request->store) {
             $store = $request->store;
         } else {
             $store = $storeToken;
         }
-        if (!$this->controlUser($store, 'measurement', 'read')) {
-            return Hermes::send('lng_0002', 401);
-        }
+
         $query = DB::table('measurement');
 
         if ($request->name) {
@@ -84,13 +86,14 @@ class MeasurementController extends Controller
 
     public function store(Request $request, $storeToken)
     {
+        if (Pariette::authRole('measurement', 'create', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         if ($request->store) {
             $store = $request->store;
         } else {
             $store = $storeToken;
-        }
-        if (!$this->controlUser($store, 'measurement', 'create')) {
-            return Hermes::send('lng_0002', 401);
         }
 
         // $validator = Validator::make($request->all(), [
@@ -146,14 +149,16 @@ class MeasurementController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
+        if (Pariette::authRole('measurement', 'update', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         if ($request->store) {
             $store = $request->store;
         } else {
             $store = $storeToken;
         }
-        if (!$this->controlUser($store, 'measurement', 'update')) {
-            return Hermes::send('lng_0002', 401);
-        }
+
 		$validator = Validator::make($request->all(), [
             'name' => 'required',
             'description' => 'required',
@@ -202,5 +207,8 @@ class MeasurementController extends Controller
 
     public function destroy($id)
     {
+        if (Pariette::authRole('measurement', 'delete', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
     }
 }

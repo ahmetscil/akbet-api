@@ -13,9 +13,10 @@ class UplinkController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-        // if (!$this->controlUser($request->store, 'uplink', 'read')) {
-        //     return Hermes::send('lng_0002', 401);
-        // }
+        if (Pariette::authRole('uplink', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         $query = DB::table('uplink');
 
         if ($request->search) {
@@ -33,6 +34,10 @@ class UplinkController extends Controller
 
     public function store(Request $request, $storeToken)
     {
+        if (Pariette::authRole('uplink', 'create', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         $validator = Validator::make($request->all(), [
             'DevEUI_uplink' => 'required'
         ]);
@@ -94,6 +99,10 @@ class UplinkController extends Controller
 
     public function show(Request $request, $storeToken, $id)
     {
+        if (Pariette::authRole('uplink', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         $query = DB::table('uplink')
             ->where('uplink.measurement', $id)
             ->offset(0)
@@ -119,9 +128,10 @@ class UplinkController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
-        if (!$this->controlUser('uplink', 'update')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('uplink', 'update', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
+
 		$validator = Validator::make($request->all(), [
             'measurement' => 'required',
             'DevEUI' => 'required',
@@ -159,5 +169,8 @@ class UplinkController extends Controller
 
     public function destroy($id)
     {
+        if (Pariette::authRole('uplink', 'delete', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
     }
 }

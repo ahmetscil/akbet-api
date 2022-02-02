@@ -13,9 +13,10 @@ class MixCalibrationController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser($request->store, 'mix_calibration', 'read')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('mix_calibration', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
+
         $query = DB::table('mix_calibration');
 
         if ($request->mix) {
@@ -42,8 +43,8 @@ class MixCalibrationController extends Controller
 
     public function store(Request $request)
     {
-        if (!$this->controlUser($request->store, 'mix_calibration', 'create')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('mix_calibration', 'create', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
 
         // $validator = Validator::make($request->all(), [
@@ -74,6 +75,10 @@ class MixCalibrationController extends Controller
 
     public function show($id)
     {
+        if (Pariette::authRole('mix_calibration', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         $data = DB::table('mix_calibration')->find($id);
         return Hermes::send($data, 200);
     }
@@ -81,9 +86,10 @@ class MixCalibrationController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (!$this->controlUser('mix_calibration', 'update')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('mix_calibration', 'update', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
+
 		$validator = Validator::make($request->all(), [
             'mix' => 'required',
             'days' => 'required',
@@ -113,5 +119,8 @@ class MixCalibrationController extends Controller
 
     public function destroy($id)
     {
+        if (Pariette::authRole('mix_calibration', 'delete', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
     }
 }

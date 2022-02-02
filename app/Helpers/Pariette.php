@@ -117,5 +117,39 @@ class Pariette {
 		return true;
 	}
 
+	public static function authRole ($where, $what, $store, $project = null) {
+		$user = Auth::id();
+		$company = DB::table('companies')->where('token', $store)->first();
+		$query = DB::table('authority')->where(['user' => $user, 'company' => $company->id]);
 
+		if ($project) {
+			$query->where('project', $project);
+		}
+		$auth = $query->first();
+		if (($auth->boss === 1) || ($auth->admin === 1)) {
+			return true;
+		}
+
+		$crud = str_split($auth->$where);
+
+		switch ($what) {
+			case 'create':
+				$w = 0;
+				break;
+			case 'read':
+				$w = 1;
+				break;
+			case 'update':
+				$w = 2;
+				break;
+			case 'delete':
+				$w = 3;
+				break;
+		}
+
+		$control = $crud[$w];
+
+		// yetkisi yoksa true dönecek!
+		return !$control;
+	}
 }

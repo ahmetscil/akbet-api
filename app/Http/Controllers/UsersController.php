@@ -13,8 +13,8 @@ class UsersController extends Controller
 {
     public function index(Request $request)
     {
-        if (!$this->controlUser($request->store, 'users', 'read')) {
-            return Hermes::send('lng_0002', 401);
+        if (Pariette::authRole('users', 'read', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
 
         $query = DB::table('users');
@@ -43,8 +43,8 @@ class UsersController extends Controller
 
     public function store(Request $request)
     {
-        if (!$this->controlUser($request->store, 'users', 'create')) {
-            return Hermes::send('Authorization Error', 401);
+        if (Pariette::authRole('users', 'create', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
 
         // $validator = $request->validate([
@@ -85,9 +85,10 @@ class UsersController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (!$this->controlUser('users', 'update')) {
-            return Hermes::send('Authorization Error', 401);
+        if (Pariette::authRole('users', 'update', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
         }
+
 		// $validator = Validator::make($request->all(), [
         //     'name' => 'required',
         //     'email' => 'required',
@@ -120,5 +121,8 @@ class UsersController extends Controller
 
     public function destroy($id)
     {
+        if (Pariette::authRole('users', 'delete', $storeToken)) {
+            return Hermes::send('lng_0002', 403);
+        }
     }
 }
