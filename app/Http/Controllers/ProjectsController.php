@@ -20,7 +20,7 @@ class ProjectsController extends Controller
         if ($request->store) {
             $store = $request->store;
         } else {
-            $store = $storeToken;
+            $store = Pariette::token($storeToken);
         }
 
         $query = DB::table('projects');
@@ -28,7 +28,7 @@ class ProjectsController extends Controller
         if ($request->company) {
             $query->where('company', $request->company);
         } else {
-            $query->where('company', Pariette::company($storeToken, 'id'));
+            $query->where('company', Pariette::company(Pariette::token($storeToken), 'id'));
         }
         if ($request->code) {
             $query->where('code', $request->code);
@@ -70,7 +70,7 @@ class ProjectsController extends Controller
         $data = $query->get();
 
         if ($data) {
-            return Hermes::send($data, 200, Pariette::company($storeToken));
+            return Hermes::send($data, 200, Pariette::company(Pariette::token($storeToken)));
         }
         
         return Hermes::send('lng_0001', 404);
@@ -150,7 +150,7 @@ class ProjectsController extends Controller
         if ($request->store) {
             $store = $request->store;
         } else {
-            $store = $storeToken;
+            $store = Pariette::token($storeToken);
         }
 
         $validator = Validator::make($request->all(), [
@@ -164,7 +164,6 @@ class ProjectsController extends Controller
             'country' => 'required',
             'city' => 'required',
             'address' => 'required',
-            'logo' => 'required',
             'started_at' => 'required',
             'ended_at' => 'required',
             'status' => 'required'

@@ -20,7 +20,7 @@ class MixController extends Controller
         if ($request->store) {
             $store = $request->store;
         } else {
-            $store = $storeToken;
+            $store = Pariette::token($storeToken);
         }
         $query = DB::table('mix');
 
@@ -74,7 +74,7 @@ class MixController extends Controller
         if ($request->store) {
             $store = $request->store;
         } else {
-            $store = $storeToken;
+            $store = Pariette::token($storeToken);
         }
 
         // $validator = Validator::make($request->all(), [
@@ -133,7 +133,7 @@ class MixController extends Controller
         if ($request->store) {
             $store = $request->store;
         } else {
-            $store = $storeToken;
+            $store = Pariette::token($storeToken);
         }
         $validator = Validator::make($request->all(), [
             'title' => 'required',

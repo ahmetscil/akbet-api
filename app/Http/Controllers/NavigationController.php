@@ -13,11 +13,10 @@ class NavigationController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-
 		$user = Auth::id();
-		$company = DB::table('companies')->where('token', $storeToken)->first();
+		$company = DB::table('companies')->where('token', Pariette::token($storeToken))->first();
 		$query = DB::table('authority')->where(['user' => $user, 'company' => $company->id]);
-        $auth = $query->select('auth','log','galleries','downlink','companies','lookup_item','lookup','sensors','projects','mix','mix_calibration','measurement','uplink','users','boss','admin')->first();
+        $auth = $query->first();
 
 		// if (($auth->boss === 1) || ($auth->admin === 1)) {
 		// 	return true;
@@ -83,97 +82,27 @@ class NavigationController extends Controller
         if($auth_users[1] == 1) {
             array_push($navSelect, 'users');
         }
-        $query = DB::table('navigation');
-
-        $query->where('company', $request->company ? $request->company : Pariette::company($storeToken, 'id'));
-        $query->where('type', $request->type ? $request->type : 'web');
-        $query->where('status', $request->status ? $request->status : 1);
-
-        $data = $query->orderBy('order', 'ASC')->get();
-        
 
         $navigation = array();
-        foreach ( $data as $d ) {
-            if ($auth_auth[1] == 1) {
-                if ( 'auth' == $d->title ) {
-                    array_push($navigation, $d);
-                }
-            }
-            if ($auth_log[1] == 1) {
-                if ( 'log' == $d->title ) {
-                    array_push($navigation, $d);
-                }
-            }
-            if ($auth_galleries[1] == 1) {
-                if ( 'galleries' == $d->title ) {
-                    array_push($navigation, $d);
-                }
-            }
-            if ($auth_downlink[1] == 1) {
-                if ( 'downlink' == $d->title ) {
-                    array_push($navigation, $d);
-                }
-            }
-            if ($auth_companies[1] == 1) {
-                if ( 'companies' == $d->title ) {
-                    array_push($navigation, $d);
-                }
-            }
-            if ($auth_lookup_item[1] == 1) {
-                if ( 'lookup_item' == $d->title ) {
-                    array_push($navigation, $d);
-                }
-            }
-            if ($auth_lookup[1] == 1) {
-                if ( 'lookup' == $d->title ) {
-                    array_push($navigation, $d);
-                }
-            }
-            if ($auth_sensors[1] == 1) {
-                if ( 'sensors' == $d->title ) {
-                    array_push($navigation, $d);
-                }
-            }
-            if ($auth_projects[1] == 1) {
-                if ( 'projects' == $d->title ) {
-                    array_push($navigation, $d);
-                }
-            }
-            if ($auth_mix[1] == 1) {
-                if ( 'mix' == $d->title ) {
-                    array_push($navigation, $d);
-                }
-            }
-            if ($auth_mix_calibration[1] == 1) {
-                if ( 'mix_calibration' == $d->title ) {
-                    array_push($navigation, $d);
-                }
-            }
-            if ($auth_measurement[1] == 1) {
-                if ( 'measurement' == $d->title ) {
-                    array_push($navigation, $d);
-                }
-            }
-            if ($auth_uplink[1] == 1) {
-                if ( 'uplink' == $d->title ) {
-                    array_push($navigation, $d);
-                }
-            }
-            if ($auth_users[1] == 1) {
-                if ( 'users' == $d->title ) {
-                    array_push($navigation, $d);
-                }
-            }
-        }
+        foreach ($navSelect as $n) {
+            $query = DB::table('navigation');
 
-        if ($navigation) {
-            return Hermes::send($navigation, 200);
+            $query->where('company', $request->company ? $request->company : Pariette::company(Pariette::token($storeToken), 'id'));
+            $query->where('type', $request->type ? $request->type : 'web');
+            $query->where('status', $request->status ? $request->status : 1);
+            $query->where('code', $n);
+            $data = $query->first();
+            if ($data) {
+                array_push($navigation, $data);
+            }
         }
+        return Hermes::send($navigation, 200);
+
         
         return Hermes::send('lng_0001', 404);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $storeToken)
     {
         if (Pariette::authRole('navigation', 'create', $storeToken)) {
             return Hermes::send('lng_0002', 403);
@@ -202,7 +131,7 @@ class NavigationController extends Controller
         return Hermes::send('lng_0003', 204);
     }
 
-    public function show($id)
+    public function show($storeToken, $id)
     {
         if (Pariette::authRole('navigation', 'read', $storeToken)) {
             return Hermes::send('lng_0002', 403);
@@ -212,7 +141,7 @@ class NavigationController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, $storeToken)
     {
         if (Pariette::authRole('navigation', 'update', $storeToken)) {
             return Hermes::send('lng_0002', 403);
@@ -240,7 +169,7 @@ class NavigationController extends Controller
     }
     
 
-    public function destroy($id)
+    public function destroy($storeToken, $id)
     {
         if (Pariette::authRole('navigation', 'delete', $storeToken)) {
             return Hermes::send('lng_0002', 403);

@@ -28,23 +28,24 @@ class AuthController extends Controller
 
         $user = auth()->user();
     
-        $auth = DB::table('authority')->where('user', $user->id)->get();
+        $auth = DB::table('authority')
+            ->where('user', $user->id)
+            ->join('companies', 'companies.id', 'authority.company')
+            ->join('projects', 'projects.id', 'authority.project')
+            ->select('authority.*', 'companies.title as companyTitle', 'companies.token as companyToken', 'companies.id as companyId', 'projects.title as projectTitle', 'projects.id as projectId')
+            ->get();
     
         if (count($auth) <= 0) {
           return response()->json(['error' => 'Unauthorized'], 401);
         }
 
-        $companies = array();
-        $projects = array();
-        foreach($auth as $a) {
-            $c = DB::table('companies')->where('id', $a->company)->first();
-            array_push($companies, $c);
-            $p = DB::table('projects')->where('id', $a->project)->first();
-            array_push($projects, $p);
-        }
-        $response['company'] = $companies;
-        $response['project'] = $projects;
-    
+        // $companies = array();
+        // $projects = array();
+        // foreach($auth as $a) {
+        //     $company = DB::table('companies')->where('id', $a->company)->first();
+        //     $company->projects = DB::table('projects')->where('id', $a->project)->first();
+        //     $a->companyData = $company;
+        // }
         $response['authority'] = $auth;
     
         $response['expires_in'] = auth()->factory()->getTTL() * 60;

@@ -19,7 +19,7 @@ class MeasurementController extends Controller
         if ($request->store) {
             $store = $request->store;
         } else {
-            $store = $storeToken;
+            $store = Pariette::token($storeToken);
         }
 
         $query = DB::table('measurement');
@@ -93,7 +93,7 @@ class MeasurementController extends Controller
         if ($request->store) {
             $store = $request->store;
         } else {
-            $store = $storeToken;
+            $store = Pariette::token($storeToken);
         }
 
         // $validator = Validator::make($request->all(), [
@@ -156,14 +156,12 @@ class MeasurementController extends Controller
         if ($request->store) {
             $store = $request->store;
         } else {
-            $store = $storeToken;
+            $store = Pariette::token($storeToken);
         }
 
 		$validator = Validator::make($request->all(), [
             'name' => 'required',
             'description' => 'required',
-            'mix' => 'required',
-            'sensor' => 'required',
             'max_temp' => 'required',
             'min_temp' => 'required',
             'last_temp' => 'required',
@@ -171,8 +169,7 @@ class MeasurementController extends Controller
             'readed_min' => 'required',
             'started_at' => 'required',
             'ended_at' => 'required',
-            'deployed_at' => 'required',
-            'last_data_at' => 'required'
+            'deployed_at' => 'required'
         ]);
 		if ($validator->fails()) {
             return Hermes::send($validator->messages(), 403);
@@ -181,8 +178,6 @@ class MeasurementController extends Controller
         $data = [
             'name' => $request->name,
             'description' => $request->description,
-            'mix' => $request->mix,
-            'sensor' => $request->sensor,
             'max_temp' => $request->max_temp,
             'min_temp' => $request->min_temp,
             'last_temp' => $request->last_temp,
@@ -191,8 +186,6 @@ class MeasurementController extends Controller
             'started_at' => $request->started_at,
             'ended_at' => $request->ended_at,
             'deployed_at' => $request->deployed_at,
-            'last_data_at' => $request->last_data_at,
-            'last_mail_sended_at' => $request->last_mail_sended_at,
             'updated_at' => Pariette::now()
         ];
 

@@ -20,7 +20,7 @@ class SensorsController extends Controller
         if ($request->store) {
             $store = $request->store;
         } else {
-            $store = $storeToken;
+            $store = Pariette::token($storeToken);
         }
 
         $query = DB::table('sensors');
@@ -68,7 +68,7 @@ class SensorsController extends Controller
         if ($request->store) {
             $store = $request->store;
         } else {
-            $store = $storeToken;
+            $store = Pariette::token($storeToken);
         }
     
         // $validator = Validator::make($request->all(), [
@@ -118,7 +118,7 @@ class SensorsController extends Controller
         if ($request->store) {
             $store = $request->store;
         } else {
-            $store = $storeToken;
+            $store = Pariette::token($storeToken);
         }
 
 		$validator = Validator::make($request->all(), [

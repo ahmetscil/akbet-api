@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class LogController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, $storeToken)
     {
         if (Pariette::authRole('log', 'read', $storeToken)) {
             return Hermes::send('lng_0002', 403);

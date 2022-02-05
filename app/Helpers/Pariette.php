@@ -116,18 +116,21 @@ class Pariette {
 		]);
 		return true;
 	}
+	public static function token ($token) {
+		$t = explode('-', $token);
+		return $t[0];
+	}
 
 	public static function authRole ($where, $what, $store, $project = null) {
 		$user = Auth::id();
-		$company = DB::table('companies')->where('token', $store)->first();
-		$query = DB::table('authority')->where(['user' => $user, 'company' => $company->id]);
-
-		if ($project) {
-			$query->where('project', $project);
-		}
+		$exp = explode('-', $store);
+		$company = DB::table('companies')->where('token', $exp[0])->first();
+		$query = DB::table('authority')->where(['user' => $user, 'company' => $company->id, 'project' => $exp[1]]);
 		$auth = $query->first();
+
 		if (($auth->boss === 1) || ($auth->admin === 1)) {
-			return true;
+			// false dönüyor çünkü uyarı vermek istemiyoruz :)
+			return false;
 		}
 
 		$crud = str_split($auth->$where);
