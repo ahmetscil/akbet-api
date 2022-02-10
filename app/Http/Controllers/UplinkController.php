@@ -122,7 +122,7 @@ class UplinkController extends Controller
             ];
             return Hermes::send($data, 200);
         }
-        return Hermes::send('lng_0004', 204);
+        return Hermes::send('lng_0001', 204);
     }
 
 

@@ -13,7 +13,7 @@ class AuthorityController extends Controller
 {
     public function index(Request $request)
     {
-        if (Pariette::authRole('authority', 'read', $storeToken)) {
+        if (Pariette::authRole('auth', 'read', $storeToken)) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -45,7 +45,7 @@ class AuthorityController extends Controller
 
     public function store(Request $request)
     {
-        if (Pariette::authRole('authority', 'create', $storeToken)) {
+        if (Pariette::authRole('auth', 'create', $storeToken)) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -81,27 +81,45 @@ class AuthorityController extends Controller
         return Hermes::send('lng_0003', 204);
     }
 
-    public function show($id)
+    public function show($storeToken, $id)
     {
-        if (Pariette::authRole('authority', 'read', $storeToken)) {
+        if (Pariette::authRole('auth', 'read', $storeToken)) {
             return Hermes::send('lng_0002', 403);
         }
 
-        $data = DB::table('authority')->find($id);
+        $query = DB::table('authority');
+        $query->where('authority.id', $id);
+        $query->join('users','users.id','=','authority.user');
+        $query->join('companies','companies.id','=','authority.company');
+        $query->join('projects','projects.id','=','authority.project');
+        $query->select('authority.*', 'users.name as userName', 'companies.title as companyName', 'projects.title as projectName');
+        
+        $data = $query->first();
+
         return Hermes::send($data, 200);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $storeToken, $id)
     {
-        if (Pariette::authRole('authority', 'update', $storeToken)) {
+        if (Pariette::authRole('auth', 'update', $storeToken)) {
             return Hermes::send('lng_0002', 403);
         }
 
         $validator = Validator::make($request->all(), [
-            'user' => 'required',
-            'company' => 'required',
-            'project' => 'required',
-            'crud' => 'required',
+            'auth' => 'required',
+            'log' => 'required',
+            'galleries' => 'required',
+            'downlink' => 'required',
+            'companies' => 'required',
+            'lookup_item' => 'required',
+            'lookup' => 'required',
+            'sensors' => 'required',
+            'projects' => 'required',
+            'mix' => 'required',
+            'mix_calibration' => 'required',
+            'measurement' => 'required',
+            'uplink' => 'required',
+            'users' => 'required',
             'boss' => 'required',
             'admin' => 'required',
             'status' => 'required'
@@ -111,10 +129,20 @@ class AuthorityController extends Controller
 		}
     
         $data = [
-            'user' => $request->user,
-            'company' => $request->company,
-            'project' => $request->project,
-            'crud' => $request->crud,
+            'auth' => $request->auth,
+            'log' => $request->log,
+            'galleries' => $request->galleries,
+            'downlink' => $request->downlink,
+            'companies' => $request->companies,
+            'lookup_item' => $request->lookup_item,
+            'lookup' => $request->lookup,
+            'sensors' => $request->sensors,
+            'projects' => $request->projects,
+            'mix' => $request->mix,
+            'mix_calibration' => $request->mix_calibration,
+            'measurement' => $request->measurement,
+            'uplink' => $request->uplink,
+            'users' => $request->users,
             'boss' => $request->boss,
             'admin' => $request->admin,
             'status' => $request->status,
@@ -131,7 +159,7 @@ class AuthorityController extends Controller
 
     public function destroy($id)
     {
-        if (Pariette::authRole('authority', 'delete', $storeToken)) {
+        if (Pariette::authRole('auth', 'delete', $storeToken)) {
             return Hermes::send('lng_0002', 403);
         }
     }

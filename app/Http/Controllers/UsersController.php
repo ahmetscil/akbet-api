@@ -17,20 +17,15 @@ class UsersController extends Controller
             return Hermes::send('lng_0002', 403);
         }
 
-        $query = DB::table('users');
-
-        if ($request->name) {
-            $query->where('name', 'like', '%'.$request->name.'%');
-        }
-        if ($request->email) {
-            $query->where('email', $request->email);
-        }
-        if ($request->phone) {
-            $query->where('phone', $request->phone);
-        }
-        if ($request->status) {
-            $query->where('status', $request->status);
-        }
+		$exp = explode('-', $storeToken);
+		$company = DB::table('companies')->where('token', $exp[0])->first();
+		$query = DB::table('authority')
+        ->where([
+            'company' => $company->id,
+            'project' => $exp[1]
+        ])
+        ->join('users', 'users.id', 'authority.user')
+        ->select('users.name as userName', 'authority.*');
 
         $data = $query->get();
 
@@ -76,14 +71,14 @@ class UsersController extends Controller
         return Hermes::send('lng_0003', 204);
     }
 
-    public function show($id)
+    public function show($storeToken, $id)
     {
         $data = DB::table('users')->find($id);
         return Hermes::send($data, 200);
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $storeToken, $id)
     {
         if (Pariette::authRole('users', 'update', $storeToken)) {
             return Hermes::send('lng_0002', 403);
@@ -96,9 +91,9 @@ class UsersController extends Controller
         //     'phone' => 'required',
         //     'status' => 'required'
         // ]);
-		if ($validator->fails()) {
-            return Hermes::send($validator->messages(), 403);
-		}
+		// if ($validator->fails()) {
+        //     return Hermes::send($validator->messages(), 403);
+		// }
     
         $data = [
             'name' => $request->name,

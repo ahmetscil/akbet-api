@@ -64,9 +64,9 @@ class LookupController extends Controller
 
     public function show($storeToken, $id)
     {
-        if (Pariette::authRole('lookup', 'read', $storeToken)) {
-            return Hermes::send('lng_0002', 403);
-        }
+        // if (Pariette::authRole('lookup', 'read', $storeToken)) {
+        //     return Hermes::send('lng_0002', 403);
+        // }
 
         $lookup = DB::table('lookup')->where('type', $id)->first();
         if ($lookup) {
