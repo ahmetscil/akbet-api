@@ -25,7 +25,7 @@ class UsersController extends Controller
             'project' => $exp[1]
         ])
         ->join('users', 'users.id', 'authority.user')
-        ->select('users.name as userName', 'authority.*');
+        ->select('users.name as userName', 'users.phone', 'users.email', 'authority.*');
 
         $data = $query->get();
 

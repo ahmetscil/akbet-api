@@ -136,7 +136,11 @@ class ProjectsController extends Controller
             return Hermes::send('lng_0002', 403);
         }
 
-        $data = DB::table('projects')->find($id);
+        $data = DB::table('projects')
+            ->where('projects.id', $id)
+            ->join('companies', 'companies.id', 'projects.company')
+            ->select('projects.*', 'companies.title as companyName')
+            ->first();
         return Hermes::send($data, 200);
     }
 
