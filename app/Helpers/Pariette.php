@@ -127,7 +127,9 @@ class Pariette {
 		$company = DB::table('companies')->where('token', $exp[0])->first();
 		$query = DB::table('authority')->where(['user' => $user, 'company' => $company->id, 'project' => $exp[1]]);
 		$auth = $query->first();
-
+		if (!$auth) {
+			return false;
+		}
 		if (($auth->boss === 1) || ($auth->admin === 1)) {
 			// false dönüyor çünkü uyarı vermek istemiyoruz :)
 			return false;
