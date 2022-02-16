@@ -13,7 +13,8 @@ class ProjectsController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-        if (Pariette::authRole('projects', 'read', $storeToken)) {
+        $auth = Pariette::authRole('projects', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -25,43 +26,54 @@ class ProjectsController extends Controller
 
         $query = DB::table('projects');
 
-        if ($request->company) {
-            $query->where('company', $request->company);
-        } else {
-            $query->where('company', Pariette::company(Pariette::token($storeToken), 'id'));
+        // if ($request->company) {
+        //     $query->where('company', $request->company);
+        // } else {
+        //     $query->where('company', Pariette::company(Pariette::token($storeToken), 'id'));
+        // }
+
+        if (($auth->admin == 0) && ($auth->boss == 0)) {
+            $query->where('projects.company', $auth->company);
+            $query->where('projects.id', $auth->project);
+        } else if (($auth->boss == 1) && ($auth->admin == 0)) {
+            $query->where('projects.company', $auth->company);
         }
+
+
         if ($request->code) {
-            $query->where('code', $request->code);
+            $query->where('projects.code', $request->code);
         }
         if ($request->title) {
-            $query->where('title', 'like', '%'.$request->title.'%');
+            $query->where('projects.title', 'like', '%'.$request->title.'%');
         }
         if ($request->description) {
-            $query->where('description', 'like', '%'.$request->description.'%');
+            $query->where('projects.description', 'like', '%'.$request->description.'%');
         }
         if ($request->email) {
-            $query->where('email', $request->email);
+            $query->where('projects.email', $request->email);
         }
         if ($request->telephone) {
-            $query->where('telephone', $request->telephone);
+            $query->where('projects.telephone', $request->telephone);
         }
         if ($request->country) {
-            $query->where('country', $request->country);
+            $query->where('projects.country', $request->country);
         }
         if ($request->city) {
-            $query->where('city', $request->city);
+            $query->where('projects.city', $request->city);
         }
         if ($request->address) {
-            $query->where('address', $request->address);
+            $query->where('projects.address', $request->address);
         }
         if ($request->started_at) {
-            $query->where('started_at', $request->started_at);
+            $query->where('projects.started_at', $request->started_at);
         }
         if ($request->ended_at) {
-            $query->where('ended_at', $request->ended_at);
+            $query->where('projects.ended_at', $request->ended_at);
         }
         if ($request->status) {
-            $query->where('status', $request->status);
+            $query->where('projects.status', $request->status);
+        } else {
+            $query->whereNotIn('projects.status', [9, 0]);
         }
 
         $query->join('companies','companies.id','=','projects.company');
@@ -78,31 +90,10 @@ class ProjectsController extends Controller
 
     public function store(Request $request, $storeToken)
     {
-        if (Pariette::authRole('projects', 'create', $storeToken)) {
+        $auth = Pariette::authRole('projects', 'create', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
-
-        // $validator = Validator::make($request->all(), [
-        //     'company' => 'required',
-        //     'code' => 'required',
-        //     'title' => 'required',
-        //     'description' => 'required',
-        //     'email_title' => 'required',
-        //     'email' => 'required',
-        //     'telephone_title' => 'required',
-        //     'telephone' => 'required',
-        //     'country' => 'required',
-        //     'city' => 'required',
-        //     'address' => 'required',
-        //     'logo' => 'required',
-        //     'started_at' => 'required',
-        //     'ended_at' => 'required',
-        //     'status' => 'required'
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return Hermes::send($validator->messages(), 403);
-        // }
 
         $data = [
             'company' => $request->company,
@@ -132,7 +123,8 @@ class ProjectsController extends Controller
 
     public function show($storeToken, $id)
     {
-        if (Pariette::authRole('projects', 'read', $storeToken)) {
+        $auth = Pariette::authRole('projects', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -147,7 +139,8 @@ class ProjectsController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
-        if (Pariette::authRole('projects', 'update', $storeToken)) {
+        $auth = Pariette::authRole('projects', 'update', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -246,7 +239,8 @@ class ProjectsController extends Controller
 
     public function destroy($storeToken, $id)
     {
-        if (Pariette::authRole('projects', 'delete', $storeToken)) {
+        $auth = Pariette::authRole('projects', 'delete', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
     }

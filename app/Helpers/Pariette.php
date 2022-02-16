@@ -132,7 +132,7 @@ class Pariette {
 		}
 		if (($auth->boss === 1) || ($auth->admin === 1)) {
 			// false dönüyor çünkü uyarı vermek istemiyoruz :)
-			return false;
+			return $auth;
 		}
 
 		$crud = str_split($auth->$where);
@@ -153,8 +153,12 @@ class Pariette {
 		}
 
 		$control = $crud[$w];
-
+		if ($control == 1) {
+			$data = $auth;
+		} else {
+			$data = false;
+		}
 		// yetkisi yoksa true dönecek!
-		return !$control;
+		return $data;
 	}
 }

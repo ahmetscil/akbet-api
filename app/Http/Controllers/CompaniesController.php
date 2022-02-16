@@ -13,35 +13,43 @@ class CompaniesController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-        if (Pariette::authRole('companies', 'read', $storeToken)) {
+        $auth = Pariette::authRole('companies', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
         $query = DB::table('companies');
 
+        if ($auth->admin == 0) {
+            $query->where('companies.id', $auth->company);
+        }
+
         if ($request->title) {
-            $query->where('title', 'like', '%'.$request->title.'%');
+            $query->where('companies.title', 'like', '%'.$request->title.'%');
         }
         if ($request->email) {
-            $query->where('email', $request->email);
+            $query->where('companies.email', $request->email);
         }
         if ($request->telephone) {
-            $query->where('telephone', $request->telephone);
+            $query->where('companies.telephone', $request->telephone);
         }
         if ($request->country) {
-            $query->where('country', $request->country);
+            $query->where('companies.country', $request->country);
         }
         if ($request->city) {
-            $query->where('city', $request->city);
+            $query->where('companies.city', $request->city);
         }
         if ($request->address) {
-            $query->where('address', 'like', '%'.$request->address.'%');
+            $query->where('companies.address', 'like', '%'.$request->address.'%');
         }
         if ($request->status) {
-            $query->where('status', $request->status);
+            $query->where('companies.status', $request->status);
         } else {
-            $query->whereNotIn('status', [9, 0]);
+            $query->whereNotIn('companies.status', [9, 0]);
         }
+
+        $query->join('lookup_item', 'lookup_item.id', 'companies.country');
+        $query->select('companies.*', 'lookup_item.key as countryName');
 
         $data = $query->get();
 
@@ -54,26 +62,10 @@ class CompaniesController extends Controller
 
     public function store(Request $request, $storeToken)
     {
-        if (Pariette::authRole('companies', 'create', $storeToken)) {
+        $auth = Pariette::authRole('companies', 'create', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
-
-        // $validator = Validator::make($request->all(), [
-        //     'title' => 'required',
-        //     'email_title' => 'required',
-        //     'email' => 'required',
-        //     'telephone_title' => 'required',
-        //     'telephone' => 'required',
-        //     'country' => 'required',
-        //     'city' => 'required',
-        //     'address' => 'required',
-        //     'logo' => 'required',
-        //     'status' => 'required'
-        // ]);
-
-        // if ($validator->fails()) {
-        //     return Hermes::send($validator->messages(), 403);
-        // }
 
         $data = [
             'token' => Pariette::random(8),
@@ -90,26 +82,78 @@ class CompaniesController extends Controller
             'created_at' => Pariette::now()
         ];
 
-        $work = DB::table('companies')->insertGetId($data);
-        if ($work) {
-            return Hermes::send($work, 201);
+        $company = DB::table('companies')->insertGetId($data);
+        if ($company) {
+            $prj = [
+                'company' => $company,
+                'code' => Pariette::random(3),
+                'title' => $request->title,
+                'description' => $request->title . ' Default Proje',
+                'email_title' => $request->email_title,
+                'email' => $request->email,
+                'telephone_title' => $request->telephone_title,
+                'telephone' => $request->telephone,
+                'country' => $request->country,
+                'city' => $request->city,
+                'address' => $request->address,
+                'logo' => $request->logo,
+                'status' => $request->status ? $request->status : 1,
+                'created_at' => Pariette::now()
+            ];
+    
+            $project = DB::table('projects')->insertGetId($prj);
+            if ($project) {
+                $auth = [
+                    'user' => Pariette::user(),
+                    'company' => $company,
+                    'project' => $project,
+                    'auth' => 1111,
+                    'log' => 1111,
+                    'galleries' => 1111,
+                    'downlink' => 1111,
+                    'companies' => 1111,
+                    'lookup_item' => 1111,
+                    'lookup' => 1111,
+                    'sensors' => 1111,
+                    'projects' => 1111,
+                    'mix' => 1111,
+                    'mix_calibration' => 1111,
+                    'measurement' => 1111,
+                    'uplink' => 1111,
+                    'users' => 1111,
+                    'boss' => 1,
+                    'admin' => 0,
+                    'status' => 1,
+                    'created_at' => Pariette::now()
+                ];
+        
+                DB::table('authority')->insert($auth);
+                return Hermes::send($company, 201);
+            }
+    
         }
         return Hermes::send('lng_0003', 204);
     }
 
     public function show($storeToken, $id)
     {
-        if (Pariette::authRole('companies', 'read', $storeToken)) {
+        $auth = Pariette::authRole('companies', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
-        $data = DB::table('companies')->find($id);
+
+        $data = DB::table('companies')
+        ->join('lookup_item', 'lookup_item.id', 'companies.country')
+        ->select('companies.*', 'lookup_item.key as countryName')
+        ->where('companies.id', $id)
+        ->first();
         return Hermes::send($data, 200);
     }
 
-
     public function update(Request $request, $storeToken, $id)
     {
-        if (Pariette::authRole('companies', 'update', $storeToken)) {
+        $auth = Pariette::authRole('companies', 'update', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 		$validator = Validator::make($request->all(), [
@@ -160,11 +204,11 @@ class CompaniesController extends Controller
         }
         return Hermes::send('lng_0004', 204);
     }
-    
 
     public function destroy($id)
     {
-        if (Pariette::authRole('companies', 'delete', $storeToken)) {
+        $auth = Pariette::authRole('companies', 'delete', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
     }

@@ -20,7 +20,7 @@ class AuthController extends Controller
         $token = auth()->attempt($credentials);
 
         if (! $token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'E-Posta veya Şifre Hatalı'], 401);
         }
         $response['access_token'] = $token;
 
@@ -36,7 +36,7 @@ class AuthController extends Controller
             ->get();
     
         if (count($auth) <= 0) {
-          return response()->json(['error' => 'Unauthorized'], 401);
+          return response()->json(['error' => 'Bu Alanı Görüntüleme Yetkiniz Bulunmamaktadır'], 401);
         }
 
         // $companies = array();

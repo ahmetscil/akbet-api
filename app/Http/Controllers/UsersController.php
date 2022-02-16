@@ -64,8 +64,39 @@ class UsersController extends Controller
             'created_at' => Pariette::now()
         ];
 
-        $work = DB::table('users')->insert($data);
+        $work = DB::table('users')->insertGetId($data);
         if ($work) {
+
+            $exp = explode('-', $storeToken);
+            $company = DB::table('companies')->where('token', $exp[0])->first();
+
+            $auth = [
+                'user' => $work,
+                'company' => $company->id,
+                'project' => $exp[1],
+                'auth' => 0110,
+                'log' => 0110,
+                'galleries' => 0110,
+                'downlink' => 0110,
+                'companies' => 0110,
+                'lookup_item' => 0110,
+                'lookup' => 0110,
+                'sensors' => 0110,
+                'projects' => 0110,
+                'mix' => 0110,
+                'mix_calibration' => 0110,
+                'measurement' => 0110,
+                'uplink' => 0110,
+                'users' => 0110,
+                'boss' => 0,
+                'admin' => 0,
+                'status' => 1,
+                'created_at' => Pariette::now()
+            ];
+    
+            DB::table('authority')->insert($auth);
+    
+
             return Hermes::send($work, 201);
         }
         return Hermes::send('lng_0003', 204);

@@ -13,7 +13,8 @@ class SensorsController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-        if (Pariette::authRole('sensors', 'read', $storeToken)) {
+        $auth = Pariette::authRole('sensors', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -61,7 +62,8 @@ class SensorsController extends Controller
 
     public function store(Request $request, $storeToken)
     {
-        if (Pariette::authRole('sensors', 'create', $storeToken)) {
+        $auth = Pariette::authRole('sensors', 'create', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -104,6 +106,10 @@ class SensorsController extends Controller
 
     public function show($storeToken, $id)
     {
+        $auth = Pariette::authRole('sensors', 'read', $storeToken);
+        if ($auth == false) {
+            return Hermes::send('lng_0002', 403);
+        }
         $data = DB::table('sensors')->find($id);
         return Hermes::send($data, 200);
     }
@@ -111,9 +117,11 @@ class SensorsController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
-        if (Pariette::authRole('sensors', 'update', $storeToken)) {
+        $auth = Pariette::authRole('sensors', 'update', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
+
 
         if ($request->store) {
             $store = $request->store;
@@ -160,8 +168,10 @@ class SensorsController extends Controller
 
     public function destroy($id)
     {
-        if (Pariette::authRole('sensors', 'delete', $storeToken)) {
+        $auth = Pariette::authRole('sensors', 'delete', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
+
     }
 }
