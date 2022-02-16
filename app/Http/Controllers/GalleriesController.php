@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class GalleriesController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, $storeToken)
     {
         if (Pariette::authRole('galleries', 'read', $storeToken)) {
             return Hermes::send('lng_0002', 403);
@@ -28,7 +28,7 @@ class GalleriesController extends Controller
         return Hermes::send('lng_0001', 404);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $storeToken)
     {
         if (Pariette::authRole('galleries', 'create', $storeToken)) {
             return Hermes::send('lng_0002', 403);
@@ -57,7 +57,7 @@ class GalleriesController extends Controller
         return Hermes::send('lng_0003', 204);
     }
 
-    public function show($id)
+    public function show($storeToken, $id)
     {
         if (Pariette::authRole('galleries', 'read', $storeToken)) {
             return Hermes::send('lng_0002', 403);
@@ -98,7 +98,7 @@ class GalleriesController extends Controller
     }
     
 
-    public function destroy($id)
+    public function destroy($storeToken, $id)
     {
         if (Pariette::authRole('galleries', 'delete', $storeToken)) {
             return Hermes::send('lng_0002', 403);

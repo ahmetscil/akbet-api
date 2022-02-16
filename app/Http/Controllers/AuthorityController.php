@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthorityController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, $storeToken)
     {
         if (Pariette::authRole('auth', 'read', $storeToken)) {
             return Hermes::send('lng_0002', 403);
@@ -43,7 +43,7 @@ class AuthorityController extends Controller
         return Hermes::send('lng_0001', 404);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $storeToken)
     {
         if (Pariette::authRole('auth', 'create', $storeToken)) {
             return Hermes::send('lng_0002', 403);
@@ -157,7 +157,7 @@ class AuthorityController extends Controller
         return Hermes::send('lng_0004', 204);
     }    
 
-    public function destroy($id)
+    public function destroy($storeToken, $id)
     {
         if (Pariette::authRole('auth', 'delete', $storeToken)) {
             return Hermes::send('lng_0002', 403);

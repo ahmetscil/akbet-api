@@ -65,7 +65,7 @@ class MixController extends Controller
         return Hermes::send('lng_0001', 404);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $storeToken)
     {
         if (Pariette::authRole('mix', 'create', $storeToken)) {
             return Hermes::send('lng_0002', 403);
@@ -181,7 +181,7 @@ class MixController extends Controller
     }
     
 
-    public function destroy($id)
+    public function destroy($storeToken, $id)
     {
         if (Pariette::authRole('mix', 'delete', $storeToken)) {
             return Hermes::send('lng_0002', 403);

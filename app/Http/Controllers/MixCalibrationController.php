@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class MixCalibrationController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, $storeToken)
     {
         if (Pariette::authRole('mix_calibration', 'read', $storeToken)) {
             return Hermes::send('lng_0002', 403);
@@ -41,7 +41,7 @@ class MixCalibrationController extends Controller
         return Hermes::send('lng_0001', 404);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $storeToken)
     {
         if (Pariette::authRole('mix_calibration', 'create', $storeToken)) {
             return Hermes::send('lng_0002', 403);
@@ -73,7 +73,7 @@ class MixCalibrationController extends Controller
         return Hermes::send('lng_0003', 204);
     }
 
-    public function show($id)
+    public function show($storeToken, $id)
     {
         if (Pariette::authRole('mix_calibration', 'read', $storeToken)) {
             return Hermes::send('lng_0002', 403);
@@ -84,7 +84,7 @@ class MixCalibrationController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $storeToken, $id)
     {
         if (Pariette::authRole('mix_calibration', 'update', $storeToken)) {
             return Hermes::send('lng_0002', 403);
@@ -117,7 +117,7 @@ class MixCalibrationController extends Controller
     }
     
 
-    public function destroy($id)
+    public function destroy($storeToken, $id)
     {
         if (Pariette::authRole('mix_calibration', 'delete', $storeToken)) {
             return Hermes::send('lng_0002', 403);

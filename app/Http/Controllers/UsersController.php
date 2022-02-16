@@ -36,7 +36,7 @@ class UsersController extends Controller
         return Hermes::send('lng_0001', 404);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $storeToken)
     {
         if (Pariette::authRole('users', 'create', $storeToken)) {
             return Hermes::send('lng_0002', 403);
@@ -114,7 +114,7 @@ class UsersController extends Controller
     }
     
 
-    public function destroy($id)
+    public function destroy($storeToken, $id)
     {
         if (Pariette::authRole('users', 'delete', $storeToken)) {
             return Hermes::send('lng_0002', 403);

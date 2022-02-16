@@ -76,7 +76,7 @@ class ProjectsController extends Controller
         return Hermes::send('lng_0001', 404);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $storeToken)
     {
         if (Pariette::authRole('projects', 'create', $storeToken)) {
             return Hermes::send('lng_0002', 403);
@@ -244,7 +244,7 @@ class ProjectsController extends Controller
     }
     
 
-    public function destroy($id)
+    public function destroy($storeToken, $id)
     {
         if (Pariette::authRole('projects', 'delete', $storeToken)) {
             return Hermes::send('lng_0002', 403);
