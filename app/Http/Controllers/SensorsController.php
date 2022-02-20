@@ -27,29 +27,34 @@ class SensorsController extends Controller
         $query = DB::table('sensors');
 
         if ($request->project) {
-            $query->where('project', $request->project);
+            $query->where('sensors.project', $request->project);
         }
         if ($request->DevEUI) {
-            $query->where('DevEUI', $request->DevEUI);
+            $query->where('sensors.DevEUI', $request->DevEUI);
         }
         if ($request->type) {
-            $query->where('type', $request->type);
+            $query->where('sensors.type', $request->type);
         }
         if ($request->title) {
-            $query->where('title', 'like', '%'.$request->title.'%');
+            $query->where('sensors.title', 'like', '%'.$request->title.'%');
         }
         if ($request->description) {
-            $query->where('description', 'like', '%'.$request->description.'%');
-        }
-        if ($request->status) {
-            $query->where('status', $request->status);
+            $query->where('sensors.description', 'like', '%'.$request->description.'%');
         }
         if ($request->sensor_no) {
-            $query->where('sensor_no', $request->sensor_no);
+            $query->where('sensors.sensor_no', $request->sensor_no);
         }
         if ($request->created_at) {
-            $query->where('created_at', $request->created_at);
+            $query->where('sensors.created_at', $request->created_at);
         }
+        if (isset($request->status)) {
+            $query->where('sensors.status', $request->status);
+        } else {
+            $query->whereNotIn('sensors.status', [9, 0]);
+        }
+
+        $query->join('projects','projects.id','=','sensors.project');
+        $query->select('sensors.*', 'projects.title as projectName');
 
         $data = $query->get();
 
@@ -110,7 +115,13 @@ class SensorsController extends Controller
         if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
-        $data = DB::table('sensors')->find($id);
+
+        $data = DB::table('sensors')
+            ->where('sensors.id', $id)
+            ->join('projects','projects.id','=','sensors.project')
+            ->select('sensors.*', 'projects.title as projectName')
+            ->first();
+        
         return Hermes::send($data, 200);
     }
 
@@ -140,6 +151,9 @@ class SensorsController extends Controller
 		}
     
         $data = [];
+        if ($request->project) {
+            $data['project'] = $request->project;
+        }
         if ($request->type) {
             $data['type'] = $request->type;
         }
@@ -152,7 +166,7 @@ class SensorsController extends Controller
         if ($request->sensor_no) {
             $data['sensor_no'] = $request->sensor_no;
         }
-        if ($request->status) {
+        if (isset($request->status)) {
             $data['status'] = $request->status;
         }
         $data['updated_at'] = Pariette::now();

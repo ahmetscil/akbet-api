@@ -13,7 +13,8 @@ class GalleriesController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-        if (Pariette::authRole('galleries', 'read', $storeToken)) {
+        $auth = Pariette::authRole('galleries', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -30,7 +31,8 @@ class GalleriesController extends Controller
 
     public function store(Request $request, $storeToken)
     {
-        if (Pariette::authRole('galleries', 'create', $storeToken)) {
+        $auth = Pariette::authRole('galleries', 'create', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -59,7 +61,8 @@ class GalleriesController extends Controller
 
     public function show($storeToken, $id)
     {
-        if (Pariette::authRole('galleries', 'read', $storeToken)) {
+        $auth = Pariette::authRole('galleries', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -70,9 +73,11 @@ class GalleriesController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (Pariette::authRole('galleries', 'update', $storeToken)) {
+        $auth = Pariette::authRole('galleries', 'update', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
+
 
         $validator = Validator::make($request->all(), [
             'title' => 'required',
@@ -100,8 +105,10 @@ class GalleriesController extends Controller
 
     public function destroy($storeToken, $id)
     {
-        if (Pariette::authRole('galleries', 'delete', $storeToken)) {
+        $auth = Pariette::authRole('galleries', 'delete', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
+
     }
 }

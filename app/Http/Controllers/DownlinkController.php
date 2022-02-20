@@ -13,9 +13,11 @@ class DownlinkController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-        if (Pariette::authRole('downlink', 'read', $storeToken)) {
+        $auth = Pariette::authRole('downlink', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
+
 
         $query = DB::table('downlink');
 
@@ -43,9 +45,11 @@ class DownlinkController extends Controller
 
     public function store(Request $request, $storeToken)
     {
-        if (Pariette::authRole('downlink', 'create', $storeToken)) {
+        $auth = Pariette::authRole('downlink', 'create', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
+
 
         // $validator = Validator::make($request->all(), [
         //     'DevEUI' => 'required',
@@ -72,9 +76,11 @@ class DownlinkController extends Controller
 
     public function show($storeToken, $id)
     {
-        if (Pariette::authRole('downlink', 'read', $storeToken)) {
+        $auth = Pariette::authRole('downlink', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
+
 
         $data = DB::table('downlink')->find($id);
         return Hermes::send($data, 200);
@@ -83,7 +89,8 @@ class DownlinkController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
-        if (Pariette::authRole('downlink', 'update', $storeToken)) {
+        $auth = Pariette::authRole('downlink', 'update', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -113,7 +120,8 @@ class DownlinkController extends Controller
 
     public function destroy($storeToken, $id)
     {
-        if (Pariette::authRole('downlink', 'delete', $storeToken)) {
+        $auth = Pariette::authRole('downlink', 'delete', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
     }

@@ -13,7 +13,8 @@ class UsersController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-        if (Pariette::authRole('users', 'read', $storeToken)) {
+        $auth = Pariette::authRole('users', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -38,7 +39,8 @@ class UsersController extends Controller
 
     public function store(Request $request, $storeToken)
     {
-        if (Pariette::authRole('users', 'create', $storeToken)) {
+        $auth = Pariette::authRole('users', 'create', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -104,6 +106,11 @@ class UsersController extends Controller
 
     public function show($storeToken, $id)
     {
+        $auth = Pariette::authRole('users', 'read', $storeToken);
+        if ($auth == false) {
+            return Hermes::send('lng_0002', 403);
+        }
+
         $data = DB::table('users')->find($id);
         return Hermes::send($data, 200);
     }
@@ -111,7 +118,8 @@ class UsersController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
-        if (Pariette::authRole('users', 'update', $storeToken)) {
+        $auth = Pariette::authRole('users', 'update', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -147,7 +155,8 @@ class UsersController extends Controller
 
     public function destroy($storeToken, $id)
     {
-        if (Pariette::authRole('users', 'delete', $storeToken)) {
+        $auth = Pariette::authRole('users', 'delete', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
     }

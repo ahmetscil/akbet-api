@@ -42,7 +42,7 @@ class CompaniesController extends Controller
         if ($request->address) {
             $query->where('companies.address', 'like', '%'.$request->address.'%');
         }
-        if ($request->status) {
+        if (isset($request->status)) {
             $query->where('companies.status', $request->status);
         } else {
             $query->whereNotIn('companies.status', [9, 0]);
@@ -128,7 +128,23 @@ class CompaniesController extends Controller
                 ];
         
                 DB::table('authority')->insert($auth);
-                return Hermes::send($company, 201);
+                Pariette::logger('createCompany',$request->title . ' Firması oluşturuldu', $company, $project);
+
+                $response = [];
+                $response['company'] = $company;
+                $response['project'] = $project;
+                $response['auth'] = $auth;
+
+                $newauth = DB::table('authority')
+                    ->where('user', Pariette::user())
+                    ->join('companies', 'companies.id', 'authority.company')
+                    ->join('projects', 'projects.id', 'authority.project')
+                    ->select('authority.*', 'companies.title as companyTitle', 'companies.token as companyToken', 'companies.id as companyId', 'projects.title as projectTitle', 'projects.id as projectId')
+                    ->get();
+                    
+                $response['authority'] = $newauth;
+
+                return Hermes::send($response, 201);
             }
     
         }

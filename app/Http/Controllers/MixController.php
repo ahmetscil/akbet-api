@@ -13,7 +13,8 @@ class MixController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-        if (Pariette::authRole('mix', 'read', $storeToken)) {
+        $auth = Pariette::authRole('mix', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -25,32 +26,35 @@ class MixController extends Controller
         $query = DB::table('mix');
 
         if ($request->user) {
-            $query->where('user', $request->user);
+            $query->where('mix.user', $request->user);
         }
         if ($request->project) {
-            $query->where('project', 'like', '%'.$request->project.'%');
+            $query->where('mix.project', 'like', '%'.$request->project.'%');
         }
         if ($request->title) {
-            $query->where('title', 'like', '%'.$request->title.'%');
+            $query->where('mix.title', 'like', '%'.$request->title.'%');
         }
         if ($request->description) {
-            $query->where('description', 'like', '%'.$request->description.'%');
+            $query->where('mix.description', 'like', '%'.$request->description.'%');
         }
         if ($request->activation_energy) {
-            $query->where('activation_energy', $request->activation_energy);
+            $query->where('mix.activation_energy', $request->activation_energy);
         }
         if ($request->temperature) {
-            $query->where('temperature', $request->temperature);
+            $query->where('mix.temperature', $request->temperature);
         }
         if ($request->a) {
-            $query->where('a', $request->a);
+            $query->where('mix.a', $request->a);
         }
         if ($request->b) {
-            $query->where('b', $request->b);
+            $query->where('mix.b', $request->b);
         }
-        if ($request->status) {
-            $query->where('status', $request->status);
+        if (isset($request->status)) {
+            $query->where('mix.status', $request->status);
+        } else {
+            $query->whereNotIn('mix.status', [9, 0]);
         }
+
 
         $query->join('users','users.id','=','mix.user');
         $query->join('projects','projects.id','=','mix.project');
@@ -67,7 +71,8 @@ class MixController extends Controller
 
     public function store(Request $request, $storeToken)
     {
-        if (Pariette::authRole('mix', 'create', $storeToken)) {
+        $auth = Pariette::authRole('mix', 'create', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -115,7 +120,8 @@ class MixController extends Controller
 
     public function show($storeToken, $id)
     {
-        if (Pariette::authRole('mix', 'read', $storeToken)) {
+        $auth = Pariette::authRole('mix', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -126,7 +132,8 @@ class MixController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
-        if (Pariette::authRole('mix', 'update', $storeToken)) {
+        $auth = Pariette::authRole('mix', 'update', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -167,7 +174,7 @@ class MixController extends Controller
         if ($request->b) {
             $data['b'] = $request->b;
         }
-        if ($request->status) {
+        if (isset($request->status)) {
             $data['status'] = $request->status;
         }
         $data['updated_at'] = Pariette::now();
@@ -183,7 +190,8 @@ class MixController extends Controller
 
     public function destroy($storeToken, $id)
     {
-        if (Pariette::authRole('mix', 'delete', $storeToken)) {
+        $auth = Pariette::authRole('mix', 'delete', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
     }

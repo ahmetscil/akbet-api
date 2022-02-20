@@ -13,7 +13,8 @@ class MixCalibrationController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-        if (Pariette::authRole('mix_calibration', 'read', $storeToken)) {
+        $auth = Pariette::authRole('mix_calibration', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -28,8 +29,10 @@ class MixCalibrationController extends Controller
         if ($request->strength) {
             $query->where('strength', $request->strength);
         }
-        if ($request->status) {
+        if (isset($request->status)) {
             $query->where('status', $request->status);
+        } else {
+            $query->whereNotIn('status', [9, 0]);
         }
 
         $data = $query->get();
@@ -43,7 +46,8 @@ class MixCalibrationController extends Controller
 
     public function store(Request $request, $storeToken)
     {
-        if (Pariette::authRole('mix_calibration', 'create', $storeToken)) {
+        $auth = Pariette::authRole('mix_calibration', 'create', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -75,7 +79,8 @@ class MixCalibrationController extends Controller
 
     public function show($storeToken, $id)
     {
-        if (Pariette::authRole('mix_calibration', 'read', $storeToken)) {
+        $auth = Pariette::authRole('mix_calibration', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -86,7 +91,8 @@ class MixCalibrationController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
-        if (Pariette::authRole('mix_calibration', 'update', $storeToken)) {
+        $auth = Pariette::authRole('mix_calibration', 'update', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -119,7 +125,8 @@ class MixCalibrationController extends Controller
 
     public function destroy($storeToken, $id)
     {
-        if (Pariette::authRole('mix_calibration', 'delete', $storeToken)) {
+        $auth = Pariette::authRole('mix_calibration', 'delete', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
     }

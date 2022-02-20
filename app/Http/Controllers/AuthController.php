@@ -24,8 +24,6 @@ class AuthController extends Controller
         }
         $response['access_token'] = $token;
 
-        // return $this->respondWithToken($token);
-
         $user = auth()->user();
     
         $auth = DB::table('authority')
@@ -39,13 +37,6 @@ class AuthController extends Controller
           return response()->json(['error' => 'Bu Alanı Görüntüleme Yetkiniz Bulunmamaktadır'], 401);
         }
 
-        // $companies = array();
-        // $projects = array();
-        // foreach($auth as $a) {
-        //     $company = DB::table('companies')->where('id', $a->company)->first();
-        //     $company->projects = DB::table('projects')->where('id', $a->project)->first();
-        //     $a->companyData = $company;
-        // }
         $response['authority'] = $auth;
     
         $response['expires_in'] = auth()->factory()->getTTL() * 60;
@@ -53,7 +44,6 @@ class AuthController extends Controller
         $response['token_type'] = 'bearer';
     
         return $response;
-
     }
 
     public function me()

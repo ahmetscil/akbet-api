@@ -87,7 +87,7 @@ class NavigationController extends Controller
         foreach ($navSelect as $n) {
             $query = DB::table('navigation');
 
-            $query->where('company', $request->company ? $request->company : Pariette::company(Pariette::token($storeToken), 'id'));
+            // $query->where('company', $request->company ? $request->company : Pariette::company(Pariette::token($storeToken), 'id'));
             $query->where('type', $request->type ? $request->type : 'web');
             $query->where('status', $request->status ? $request->status : 1);
             $query->where('code', $n);
@@ -104,7 +104,8 @@ class NavigationController extends Controller
 
     public function store(Request $request, $storeToken)
     {
-        if (Pariette::authRole('navigation', 'create', $storeToken)) {
+        $auth = Pariette::authRole('navigation', 'create', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -133,9 +134,11 @@ class NavigationController extends Controller
 
     public function show($storeToken, $id)
     {
-        if (Pariette::authRole('navigation', 'read', $storeToken)) {
+        $auth = Pariette::authRole('navigation', 'show', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
+
         $data = DB::table('navigation')->find($id);
         return Hermes::send($data, 200);
     }
@@ -143,7 +146,8 @@ class NavigationController extends Controller
 
     public function update(Request $request, $id, $storeToken)
     {
-        if (Pariette::authRole('navigation', 'update', $storeToken)) {
+        $auth = Pariette::authRole('navigation', 'update', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -171,7 +175,8 @@ class NavigationController extends Controller
 
     public function destroy($storeToken, $id)
     {
-        if (Pariette::authRole('navigation', 'delete', $storeToken)) {
+        $auth = Pariette::authRole('navigation', 'delete', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
     }

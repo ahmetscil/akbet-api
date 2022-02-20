@@ -13,7 +13,8 @@ class UplinkController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-        if (Pariette::authRole('uplink', 'read', $storeToken)) {
+        $auth = Pariette::authRole('uplink', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -34,7 +35,8 @@ class UplinkController extends Controller
 
     public function store(Request $request, $storeToken)
     {
-        if (Pariette::authRole('uplink', 'create', $storeToken)) {
+        $auth = Pariette::authRole('uplink', 'create', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -99,7 +101,8 @@ class UplinkController extends Controller
 
     public function show(Request $request, $storeToken, $id)
     {
-        if (Pariette::authRole('uplink', 'read', $storeToken)) {
+        $auth = Pariette::authRole('uplink', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -114,7 +117,11 @@ class UplinkController extends Controller
         $uplinkdata = $query->get();
         if (count($uplinkdata)) {
             $sensor = DB::table('sensors')->where('DevEUI', $uplinkdata[0]->DevEUI)->first();
-            $project = DB::table('projects')->where('id', $sensor->project)->first();
+            if ($sensor) {
+                $project = DB::table('projects')->where('id', $sensor->project)->first();
+            } else {
+                return Hermes::send('lng_0001', 204);
+            }
             $data = [
                 'uplinkdata' => $uplinkdata,
                 'sensor' => $sensor,
@@ -128,7 +135,8 @@ class UplinkController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
-        if (Pariette::authRole('uplink', 'update', $storeToken)) {
+        $auth = Pariette::authRole('uplink', 'update', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -169,7 +177,8 @@ class UplinkController extends Controller
 
     public function destroy($id)
     {
-        if (Pariette::authRole('uplink', 'delete', $storeToken)) {
+        $auth = Pariette::authRole('uplink', 'delete', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
     }

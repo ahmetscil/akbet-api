@@ -13,10 +13,6 @@ class LookupItemController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-        if (Pariette::authRole('lookup_item', 'read', $storeToken)) {
-            return Hermes::send('lng_0002', 403);
-        }
-
         $query = DB::table('lookup_item');
 
         if ($request->lookup) {
@@ -42,10 +38,10 @@ class LookupItemController extends Controller
 
     public function store(Request $request, $storeToken)
     {
-        if (Pariette::authRole('lookup_item', 'create', $storeToken)) {
+        $auth = Pariette::authRole('lookup_item', 'create', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
-
 
         // $validator = Validator::make($request->all(), [
         //     'DevEUI' => 'required',
@@ -72,10 +68,6 @@ class LookupItemController extends Controller
 
     public function show($storeToken, $id)
     {
-        if (Pariette::authRole('lookup_item', 'read', $storeToken)) {
-            return Hermes::send('lng_0002', 403);
-        }
-
         $data = DB::table('lookup')->find($id);
         return Hermes::send($data, 200);
     }
@@ -83,7 +75,8 @@ class LookupItemController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
-        if (Pariette::authRole('lookup_item', 'update', $storeToken)) {
+        $auth = Pariette::authRole('lookup_item', 'update', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -111,7 +104,8 @@ class LookupItemController extends Controller
 
     public function destroy($storeToken, $id)
     {
-        if (Pariette::authRole('lookup_item', 'delete', $storeToken)) {
+        $auth = Pariette::authRole('lookup_item', 'delete', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
     }

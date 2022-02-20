@@ -13,7 +13,8 @@ class AuthorityController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-        if (Pariette::authRole('auth', 'read', $storeToken)) {
+        $auth = Pariette::authRole('auth', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -45,9 +46,11 @@ class AuthorityController extends Controller
 
     public function store(Request $request, $storeToken)
     {
-        if (Pariette::authRole('auth', 'create', $storeToken)) {
+        $auth = Pariette::authRole('auth', 'create', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
+
 
         $validator = Validator::make($request->all(), [
             'user' => 'required',
@@ -83,9 +86,11 @@ class AuthorityController extends Controller
 
     public function show($storeToken, $id)
     {
-        if (Pariette::authRole('auth', 'read', $storeToken)) {
+        $auth = Pariette::authRole('auth', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
+
 
         $query = DB::table('authority');
         $query->where('authority.id', $id);
@@ -101,9 +106,11 @@ class AuthorityController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
-        if (Pariette::authRole('auth', 'update', $storeToken)) {
+        $auth = Pariette::authRole('auth', 'update', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
+
 
         $validator = Validator::make($request->all(), [
             'auth' => 'required',
@@ -159,7 +166,8 @@ class AuthorityController extends Controller
 
     public function destroy($storeToken, $id)
     {
-        if (Pariette::authRole('auth', 'delete', $storeToken)) {
+        $auth = Pariette::authRole('auth', 'delete', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
     }

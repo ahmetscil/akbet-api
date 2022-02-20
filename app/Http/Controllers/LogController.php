@@ -13,7 +13,8 @@ class LogController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-        if (Pariette::authRole('log', 'read', $storeToken)) {
+        $auth = Pariette::authRole('log', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -44,7 +45,8 @@ class LogController extends Controller
 
     public function store(Request $request, $storeToken)
     {
-        if (Pariette::authRole('log', 'create', $storeToken)) {
+        $auth = Pariette::authRole('log', 'create', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -75,7 +77,8 @@ class LogController extends Controller
 
     public function show($storeToken, $id)
     {
-        if (Pariette::authRole('log', 'read', $storeToken)) {
+        $auth = Pariette::authRole('log', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -86,7 +89,8 @@ class LogController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
-        if (Pariette::authRole('log', 'update', $storeToken)) {
+        $auth = Pariette::authRole('log', 'update', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -118,7 +122,8 @@ class LogController extends Controller
 
     public function destroy($storeToken, $id)
     {
-        if (Pariette::authRole('log', 'delete', $storeToken)) {
+        $auth = Pariette::authRole('log', 'delete', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
     }

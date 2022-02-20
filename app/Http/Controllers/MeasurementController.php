@@ -12,7 +12,8 @@ class MeasurementController extends Controller
 {
     public function index(Request $request, $storeToken)
     {
-        if (Pariette::authRole('measurement', 'read', $storeToken)) {
+        $auth = Pariette::authRole('measurement', 'read', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -25,55 +26,70 @@ class MeasurementController extends Controller
         $query = DB::table('measurement');
 
         if ($request->name) {
-            $query->where('name', 'like', '%'.$request->name.'%');
+            $query->where('measurement.name', 'like', '%'.$request->name.'%');
         }
         if ($request->description) {
-            $query->where('description', 'like', '%'.$request->description.'%');
+            $query->where('measurement.description', 'like', '%'.$request->description.'%');
         }
         if ($request->mix) {
-            $query->where('mix', $request->mix);
+            $query->where('measurement.mix', $request->mix);
         }
         if ($request->sensor) {
             $sensor = DB::table('sensors')->where('id', $request->sensor)->first();
-            $query->where('sensor', $sensor->id);
+            $query->where('measurement.sensor', $sensor->id);
         }
         if ($request->max_temp) {
-            $query->where('max_temp', $request->max_temp);
+            $query->where('measurement.max_temp', $request->max_temp);
         }
         if ($request->min_temp) {
-            $query->where('min_temp', $request->min_temp);
+            $query->where('measurement.min_temp', $request->min_temp);
         }
         if ($request->last_temp) {
-            $query->where('last_temp', $request->last_temp);
+            $query->where('measurement.last_temp', $request->last_temp);
         }
         if ($request->readed_max) {
-            $query->where('readed_max', $request->readed_max);
+            $query->where('measurement.readed_max', $request->readed_max);
         }
         if ($request->readed_min) {
-            $query->where('readed_min', $request->readed_min);
+            $query->where('measurement.readed_min', $request->readed_min);
         }
         if ($request->started_at) {
-            $query->where('started_at', $request->started_at);
+            $query->where('measurement.started_at', $request->started_at);
         }
         if ($request->ended_at) {
-            $query->where('ended_at', $request->ended_at);
+            $query->where('measurement.ended_at', $request->ended_at);
         }
         if ($request->deployed_at) {
-            $query->where('deployed_at', $request->deployed_at);
+            $query->where('measurement.deployed_at', $request->deployed_at);
         }
         if ($request->last_data_at) {
-            $query->where('last_data_at', $request->last_data_at);
+            $query->where('measurement.last_data_at', $request->last_data_at);
         }
         if ($request->created_at) {
-            $query->where('created_at', $request->created_at);
+            $query->where('measurement.created_at', $request->created_at);
         }
         if ($request->last_mail_sended_at) {
-            $query->where('last_mail_sended_at', $request->last_mail_sended_at);
+            $query->where('measurement.last_mail_sended_at', $request->last_mail_sended_at);
+        }
+        if (isset($request->status)) {
+            $query->where('measurement.status', $request->status);
+        } else {
+            $query->whereNotIn('measurement.status', [9, 0]);
         }
         
+        if ($request->project) {
+            $sensors = DB::table('sensors')->where('project', $request->project)->select('sensors.id')->get();
+            $a = array();
+            foreach ($sensors as $s) {
+                array_push($a, $s->id);
+            }
+            $query->whereIn('measurement.sensor', $a);
+        }
+
         $query->join('mix','mix.id','=','measurement.mix');
         $query->join('sensors','sensors.id','=','measurement.sensor');
-        $query->select('measurement.*', 'mix.title as mixTitle', 'sensors.title as sensorsTitle', 'sensors.DevEUI');
+        $query->join('projects','projects.id','=','sensors.project');
+        $query->select('measurement.*', 'mix.title as mixTitle', 'sensors.title as sensorsTitle', 'sensors.DevEUI', 'projects.title as projectName');
         $query->orderBy('id', 'DESC');
         $data = $query->get();
 
@@ -86,9 +102,11 @@ class MeasurementController extends Controller
 
     public function store(Request $request, $storeToken)
     {
-        if (Pariette::authRole('measurement', 'create', $storeToken)) {
+        $auth = Pariette::authRole('measurement', 'create', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
+
 
         if ($request->store) {
             $store = $request->store;
@@ -130,6 +148,7 @@ class MeasurementController extends Controller
             'ended_at' => date("y-m-d H:i:s", strtotime($request->ended_at)),
             'deployed_at' => date("y-m-d H:i:s", strtotime($request->deployed_at)),
             'last_data_at' => date("y-m-d H:i:s", strtotime($request->last_data_at)),
+            'status' => $request->status ? $request->status : 1,
             'created_at' => Pariette::now()
         ];
 
@@ -149,7 +168,8 @@ class MeasurementController extends Controller
 
     public function update(Request $request, $storeToken, $id)
     {
-        if (Pariette::authRole('measurement', 'update', $storeToken)) {
+        $auth = Pariette::authRole('measurement', 'update', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
 
@@ -162,11 +182,6 @@ class MeasurementController extends Controller
 		$validator = Validator::make($request->all(), [
             'name' => 'required',
             'description' => 'required',
-            'max_temp' => 'required',
-            'min_temp' => 'required',
-            'last_temp' => 'required',
-            'readed_max' => 'required',
-            'readed_min' => 'required',
             'started_at' => 'required',
             'ended_at' => 'required',
             'deployed_at' => 'required'
@@ -178,14 +193,10 @@ class MeasurementController extends Controller
         $data = [
             'name' => $request->name,
             'description' => $request->description,
-            'max_temp' => $request->max_temp,
-            'min_temp' => $request->min_temp,
-            'last_temp' => $request->last_temp,
-            'readed_max' => $request->readed_max,
-            'readed_min' => $request->readed_min,
             'started_at' => $request->started_at,
             'ended_at' => $request->ended_at,
             'deployed_at' => $request->deployed_at,
+            'status' => $request->status ? $request->status : 1,
             'updated_at' => Pariette::now()
         ];
 
@@ -200,7 +211,8 @@ class MeasurementController extends Controller
 
     public function destroy($id)
     {
-        if (Pariette::authRole('measurement', 'delete', $storeToken)) {
+        $auth = Pariette::authRole('measurement', 'delete', $storeToken);
+        if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
     }

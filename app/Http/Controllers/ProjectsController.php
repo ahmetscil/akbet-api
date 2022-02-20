@@ -26,12 +26,6 @@ class ProjectsController extends Controller
 
         $query = DB::table('projects');
 
-        // if ($request->company) {
-        //     $query->where('company', $request->company);
-        // } else {
-        //     $query->where('company', Pariette::company(Pariette::token($storeToken), 'id'));
-        // }
-
         if (($auth->admin == 0) && ($auth->boss == 0)) {
             $query->where('projects.company', $auth->company);
             $query->where('projects.id', $auth->project);
@@ -70,7 +64,7 @@ class ProjectsController extends Controller
         if ($request->ended_at) {
             $query->where('projects.ended_at', $request->ended_at);
         }
-        if ($request->status) {
+        if (isset($request->status)) {
             $query->where('projects.status', $request->status);
         } else {
             $query->whereNotIn('projects.status', [9, 0]);
@@ -222,7 +216,7 @@ class ProjectsController extends Controller
             $data['ended_at'] = $request->ended_at;
         }
         
-        if ($request->status) {
+        if (isset($request->status)) {
             $data['status'] = $request->status;
         }
         
