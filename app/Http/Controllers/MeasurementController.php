@@ -73,8 +73,6 @@ class MeasurementController extends Controller
         }
         if (isset($request->status)) {
             $query->where('measurement.status', $request->status);
-        } else {
-            $query->whereNotIn('measurement.status', [9, 0]);
         }
         
         if ($request->project) {

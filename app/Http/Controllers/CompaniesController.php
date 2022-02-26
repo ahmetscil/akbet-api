@@ -44,8 +44,6 @@ class CompaniesController extends Controller
         }
         if (isset($request->status)) {
             $query->where('companies.status', $request->status);
-        } else {
-            $query->whereNotIn('companies.status', [9, 0]);
         }
 
         $query->join('lookup_item', 'lookup_item.id', 'companies.country');

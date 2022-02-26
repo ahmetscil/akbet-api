@@ -115,6 +115,7 @@ class UplinkController extends Controller
             $query->where('DevEUI', $request->DevEUI);
         }
         $uplinkdata = $query->get();
+        $measurement = DB::table('measurement')->where('id', $id)->first();
         if (count($uplinkdata)) {
             $sensor = DB::table('sensors')->where('DevEUI', $uplinkdata[0]->DevEUI)->first();
             if ($sensor) {
@@ -125,6 +126,7 @@ class UplinkController extends Controller
             $data = [
                 'uplinkdata' => $uplinkdata,
                 'sensor' => $sensor,
+                'measurement' => $measurement,
                 'project' => $project
             ];
             return Hermes::send($data, 200);

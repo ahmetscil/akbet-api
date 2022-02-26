@@ -31,8 +31,6 @@ class MixCalibrationController extends Controller
         }
         if (isset($request->status)) {
             $query->where('status', $request->status);
-        } else {
-            $query->whereNotIn('status', [9, 0]);
         }
 
         $data = $query->get();

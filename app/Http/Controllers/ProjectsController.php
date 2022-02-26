@@ -66,8 +66,6 @@ class ProjectsController extends Controller
         }
         if (isset($request->status)) {
             $query->where('projects.status', $request->status);
-        } else {
-            $query->whereNotIn('projects.status', [9, 0]);
         }
 
         $query->join('companies','companies.id','=','projects.company');
@@ -147,16 +145,8 @@ class ProjectsController extends Controller
         $validator = Validator::make($request->all(), [
             'code' => 'required',
             'title' => 'required',
-            'description' => 'required',
-            'email_title' => 'required',
-            'email' => 'required',
-            'telephone_title' => 'required',
-            'telephone' => 'required',
             'country' => 'required',
             'city' => 'required',
-            'address' => 'required',
-            'started_at' => 'required',
-            'ended_at' => 'required',
             'status' => 'required'
         ]);
 		if ($validator->fails()) {
