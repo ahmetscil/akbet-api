@@ -44,6 +44,8 @@ class CompaniesController extends Controller
         }
         if (isset($request->status)) {
             $query->where('companies.status', $request->status);
+        } else {
+            $query->where('companies.status', 1);
         }
 
         $query->join('lookup_item', 'lookup_item.id', 'companies.country');

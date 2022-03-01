@@ -38,7 +38,7 @@ class Breadcrumb
                 ->first();
                 $crumb['items'] = [
                     ['title' => 'AkilliBeton', 'route' => 'Dashboard'],
-                    ['title' => $row->title, 'route' => 'Companies']
+                    ['title' => $row->title, 'route' => 'Companies', 'locale' => true]
                 ];
             } else {
                 $crumb['items'] = [
@@ -57,8 +57,8 @@ class Breadcrumb
                 ->first();
                 $crumb['items'] = [
                     ['title' => 'AkilliBeton', 'route' => 'Dashboard'],
-                    ['title' => $row->companyName, 'route' => 'Companies'],
-                    ['title' => $row->projectName, 'route' => 'Projects?company='. $row->companyId],
+                    ['title' => $row->companyName, 'route' => 'Companies', 'locale' => true],
+                    ['title' => $row->projectName, 'route' => 'Projects?company='. $row->companyId, 'locale' => true],
                 ];
 
             } else {
@@ -79,9 +79,9 @@ class Breadcrumb
                 ->select('sensors.title as sensorName', 'projects.title as projectName', 'projects.id as projectId', 'companies.title as companyName', 'companies.id as companyId')
                 ->first();
                 $crumb['items'] = [
-                    ['title' => $row->companyName, 'route' => 'Companies'],
-                    ['title' => $row->projectName, 'route' => 'Projects?company='. $row->companyId],
-                    ['title' => $row->sensorName, 'route' => 'Sensors?project='. $row->projectId],
+                    ['title' => $row->companyName, 'route' => 'Companies', 'locale' => true],
+                    ['title' => $row->projectName, 'route' => 'Projects?company='. $row->companyId, 'locale' => true],
+                    ['title' => $row->sensorName, 'route' => 'Sensors?project='. $row->projectId, 'locale' => true],
                 ];
             }
             else if ($request->project) {
@@ -91,8 +91,8 @@ class Breadcrumb
                 ->select('projects.title as projectName', 'projects.id as projectId', 'companies.title as companyName', 'companies.id as companyId')
                 ->first();
                 $crumb['items'] = [
-                    ['title' => $row->companyName, 'route' => 'Companies'],
-                    ['title' => $row->projectName, 'route' => 'Projects?company='. $row->companyId],
+                    ['title' => $row->companyName, 'route' => 'Companies', 'locale' => true],
+                    ['title' => $row->projectName, 'route' => 'Projects?company='. $row->companyId, 'locale' => true],
                 ];
 
             } else {
@@ -113,7 +113,7 @@ class Breadcrumb
             ];
         }
         else if($request->mixCalibration == true) {
-            $crumb['active'] = 'Mix Calibration';
+            $crumb['active'] = 'MixCalibration';
             $crumb['items'] = [
                 ['title' => 'AkilliBeton', 'route' => 'Dashboard'],
                 ['title' => 'Companies', 'route' => 'Companies'],

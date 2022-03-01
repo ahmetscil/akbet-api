@@ -49,6 +49,8 @@ class SensorsController extends Controller
         }
         if (isset($request->status)) {
             $query->where('sensors.status', $request->status);
+        } else {
+            $query->where('sensors.status', 1);
         }
 
         $query->join('projects','projects.id','=','sensors.project');

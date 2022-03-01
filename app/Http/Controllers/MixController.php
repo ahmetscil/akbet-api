@@ -51,6 +51,8 @@ class MixController extends Controller
         }
         if (isset($request->status)) {
             $query->where('mix.status', $request->status);
+        } else {
+            $query->where('mix.status', 1);
         }
 
 

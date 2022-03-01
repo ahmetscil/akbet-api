@@ -66,6 +66,8 @@ class ProjectsController extends Controller
         }
         if (isset($request->status)) {
             $query->where('projects.status', $request->status);
+        } else {
+            $query->where('projects.status', 1);
         }
 
         $query->join('companies','companies.id','=','projects.company');
