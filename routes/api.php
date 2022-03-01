@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Actions\Breadcrumb;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuthorityController;
 use App\Http\Controllers\CompaniesController;
@@ -26,8 +27,18 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::get('me', [AuthController::class, 'me']);
 });
 
+Route::get('/clear', function() {
+    Artisan::call('cache:clear');
+    Artisan::call('route:clear');
+    Artisan::call('config:clear');
+    Artisan::call('config:cache');
+    Artisan::call('view:clear');
+    return response()->json(['message' => 'artisan cleared'], 200);
+});
+
 Route::prefix('{storeToken}')->group(function () {
     Route::group(['middleware' => ['jwt.verify']], function() {
+        Route::get('Breadcrumb', Breadcrumb::class);
         Route::apiResource('Auth', AuthController::class);
         Route::apiResource('Navigation', NavigationController::class);
         Route::apiResource('Authority', AuthorityController::class);

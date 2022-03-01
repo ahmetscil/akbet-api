@@ -135,26 +135,55 @@ class AuthorityController extends Controller
             return Hermes::send($validator->messages(), 403);
 		}
     
-        $data = [
-            'auth' => $request->auth,
-            'log' => $request->log,
-            'galleries' => $request->galleries,
-            'downlink' => $request->downlink,
-            'companies' => $request->companies,
-            'lookup_item' => $request->lookup_item,
-            'lookup' => $request->lookup,
-            'sensors' => $request->sensors,
-            'projects' => $request->projects,
-            'mix' => $request->mix,
-            'mix_calibration' => $request->mix_calibration,
-            'measurement' => $request->measurement,
-            'uplink' => $request->uplink,
-            'users' => $request->users,
-            'boss' => $request->boss,
-            'admin' => $request->admin,
-            'status' => $request->status,
-            'updated_at' => Pariette::now()
-        ];
+        $data = [];
+        if ($request->auth) {
+            $data['auth'] = $request->auth;
+        }
+        if ($request->log) {
+            $data['log'] = $request->log;
+        }
+        if ($request->galleries) {
+            $data['galleries'] = $request->galleries;
+        }
+        if ($request->downlink) {
+            $data['downlink'] = $request->downlink;
+        }
+        if ($request->companies) {
+            $data['companies'] = $request->companies;
+        }
+        if ($request->lookup_item) {
+            $data['lookup_item'] = $request->lookup_item;
+        }
+        if ($request->lookup) {
+            $data['lookup'] = $request->lookup;
+        }
+        if ($request->sensors) {
+            $data['sensors'] = $request->sensors;
+        }
+        if ($request->projects) {
+            $data['projects'] = $request->projects;
+        }
+        if ($request->mix) {
+            $data['mix'] = $request->mix;
+        }
+        if ($request->mix_calibration) {
+            $data['mix_calibration'] = $request->mix_calibration;
+        }
+        if ($request->measurement) {
+            $data['measurement'] = $request->measurement;
+        }
+        if ($request->uplink) {
+            $data['uplink'] = $request->uplink;
+        }
+        if ($request->users) {
+            $data['users'] = $request->users;
+        }
+
+        $data['boss'] = $request->boss;
+        $data['admin'] = $request->admin;
+        $data['status'] = $request->status;
+
+        $data['updated_at'] = Pariette::now();
 
         $update = DB::table('authority')->where('id', $id)->update($data);
         
