@@ -196,7 +196,7 @@ class MeasurementController extends Controller
             'started_at' => $request->started_at,
             'ended_at' => $request->ended_at,
             'deployed_at' => $request->deployed_at,
-            'status' => $request->status ? $request->status : 1,
+            'status' => $request->status,
             'updated_at' => Pariette::now()
         ];
 
