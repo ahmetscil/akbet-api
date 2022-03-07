@@ -180,11 +180,7 @@ class MeasurementController extends Controller
         }
 
 		$validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'description' => 'required',
-            'started_at' => 'required',
-            'ended_at' => 'required',
-            'deployed_at' => 'required'
+            'name' => 'required'
         ]);
 		if ($validator->fails()) {
             return Hermes::send($validator->messages(), 403);
