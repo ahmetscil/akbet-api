@@ -71,6 +71,7 @@ class Breadcrumb
                 break;
             case 'measurement':
                 $crumb['active'] = 'Measurement';
+
                 if ($request->sensor) {
                     $row = DB::table('sensors')
                     ->where('sensors.id', $request->sensor)
@@ -145,19 +146,51 @@ class Breadcrumb
                 break;
             case 'mixCalibration':
                 $crumb['active'] = 'MixCalibration';
-                $crumb['items'] = [
-                    ['title' => 'AkilliBeton', 'route' => 'Dashboard'],
-                    ['title' => 'Companies', 'route' => 'Companies'],
-                    ['title' => 'Projects', 'route' => 'Projects'],
-                ];
+                if ($request->mix) {
+                    $row = DB::table('mix')
+                    ->where('mix.id', $request->mix)
+                    ->join('projects', 'projects.id', '=', 'mix.project')
+                    ->join('companies', 'companies.id', '=', 'projects.company')
+                    ->select('mix.title as mixTitle', 'mix.id as mixId', 'projects.title as projectName', 'projects.id as projectId', 'companies.title as companyName', 'companies.id as companyId')
+                    ->first();
+                    $crumb['items'] = [
+                        ['title' => 'AkilliBeton', 'route' => 'Dashboard'],
+                        ['title' => $row->companyName, 'route' => 'Companies', 'locale' => true],
+                        ['title' => $row->projectName, 'route' => 'Projects?company='. $row->companyId, 'locale' => true],
+                        ['title' => $row->mixTitle, 'route' => 'Mix?project='. $row->projectId, 'locale' => true],
+                    ];
+    
+                } else {
+                    $crumb['items'] = [
+                        ['title' => 'AkilliBeton', 'route' => 'Dashboard'],
+                        ['title' => 'Companies', 'route' => 'Companies'],
+                        ['title' => 'Projects', 'route' => 'Projects'],
+                    ];
+                }
                 break;
             case 'mix':
                 $crumb['active'] = 'Mix';
-                $crumb['items'] = [
-                    ['title' => 'AkilliBeton', 'route' => 'Dashboard'],
-                    ['title' => 'Companies', 'route' => 'Companies'],
-                    ['title' => 'Projects', 'route' => 'Projects'],
-                ];
+
+                if ($request->project) {
+                    $row = DB::table('projects')
+                    ->where('projects.id', $request->project)
+                    ->join('companies', 'companies.id', '=', 'projects.company')
+                    ->select('projects.title as projectName', 'projects.id as projectId', 'companies.title as companyName', 'companies.id as companyId')
+                    ->first();
+                    $crumb['items'] = [
+                        ['title' => 'AkilliBeton', 'route' => 'Dashboard'],
+                        ['title' => $row->companyName, 'route' => 'Companies', 'locale' => true],
+                        ['title' => $row->projectName, 'route' => 'Projects?company='. $row->companyId, 'locale' => true],
+                    ];
+    
+                } else {
+                    $crumb['items'] = [
+                        ['title' => 'AkilliBeton', 'route' => 'Dashboard'],
+                        ['title' => 'Companies', 'route' => 'Companies'],
+                        ['title' => 'Projects', 'route' => 'Projects'],
+                    ];
+                }
+
                 break;
             case 'log':
                 $crumb['active'] = 'Logs';
