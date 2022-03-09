@@ -179,22 +179,35 @@ class MeasurementController extends Controller
             $store = Pariette::token($storeToken);
         }
 
-		$validator = Validator::make($request->all(), [
-            'name' => 'required'
-        ]);
-		if ($validator->fails()) {
-            return Hermes::send($validator->messages(), 403);
-		}
+		// $validator = Validator::make($request->all(), [
+        //     'name' => 'required'
+        // ]);
+		// if ($validator->fails()) {
+        //     return Hermes::send($validator->messages(), 403);
+		// }
     
-        $data = [
-            'name' => $request->name,
-            'description' => $request->description,
-            'started_at' => $request->started_at,
-            'ended_at' => $request->ended_at,
-            'deployed_at' => $request->deployed_at,
-            'status' => $request->status,
-            'updated_at' => Pariette::now()
-        ];
+        $data = [];
+
+        if (isset($request->name)) {
+            $data['name'] = $request->name;
+        }
+        if (isset($request->description)) {
+            $data['description'] = $request->description;
+        }
+        if (isset($request->started_at)) {
+            $data['started_at'] = $request->started_at;
+        }
+        if (isset($request->ended_at)) {
+            $data['ended_at'] = $request->ended_at;
+        }
+        if (isset($request->deployed_at)) {
+            $data['deployed_at'] = $request->deployed_at;
+        }
+        if (isset($request->status)) {
+            $data['status'] = $request->status;
+        }
+        
+        $data['updated_at'] = Pariette::now();
 
         $update = DB::table('measurement')->where('id', $id)->update($data);
         

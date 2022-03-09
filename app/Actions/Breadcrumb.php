@@ -1,5 +1,10 @@
 <?php
 
+/*
+    query yoksa oturum açtığı proje veya company datasını alabilir.
+    bu geliştirme faz2ye bırakılsın.
+*/
+
 namespace App\Actions;
 
 use App\Helpers\Hermes;

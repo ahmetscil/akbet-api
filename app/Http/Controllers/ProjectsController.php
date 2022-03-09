@@ -31,8 +31,10 @@ class ProjectsController extends Controller
             $query->where('projects.id', $auth->project);
         } else if (($auth->boss == 1) && ($auth->admin == 0)) {
             $query->where('projects.company', $auth->company);
-        } else if (($auth->admin == 1) && ($request->company)) {
+        } else if (($auth->admin == 1) && (isset($request->company))) {
             $query->where('projects.company', $request->company);
+        } else if (($auth->admin == 1) && (!isset($request->company))) {
+            $query->where('projects.company', $auth->company);
         }
 
         if ($request->code) {

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Helpers\Hermes;
@@ -28,6 +27,8 @@ class SensorsController extends Controller
 
         if ($request->project) {
             $query->where('sensors.project', $request->project);
+        } else {
+            $query->where('sensors.project', $auth->project);
         }
         if ($request->DevEUI) {
             $query->where('sensors.DevEUI', $request->DevEUI);
@@ -54,6 +55,7 @@ class SensorsController extends Controller
         }
 
         $query->join('projects','projects.id','=','sensors.project');
+        $query->join('companies', 'companies.id', '=', 'projects.company');
         $query->select('sensors.*', 'projects.title as projectName');
 
         $data = $query->get();

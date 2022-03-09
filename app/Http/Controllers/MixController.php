@@ -28,9 +28,13 @@ class MixController extends Controller
         if ($request->user) {
             $query->where('mix.user', $request->user);
         }
+        
         if ($request->project) {
             $query->where('mix.project', 'like', '%'.$request->project.'%');
+        } else {
+            $query->where('mix.project', $auth->project);
         }
+
         if ($request->title) {
             $query->where('mix.title', 'like', '%'.$request->title.'%');
         }

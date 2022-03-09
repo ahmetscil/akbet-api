@@ -20,9 +20,7 @@ class CompaniesController extends Controller
 
         $query = DB::table('companies');
 
-        if ($auth->admin == 0) {
-            $query->where('companies.id', $auth->company);
-        }
+        $query->where('companies.id', $auth->company);
 
         if ($request->title) {
             $query->where('companies.title', 'like', '%'.$request->title.'%');
