@@ -39,47 +39,63 @@ class NavigationController extends Controller
 		$auth_admin = $auth->admin;
 
         $navSelect = array();
-
-        if(($auth_auth[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
+        if (Pariette::who('admin') == 0) {
+            if(($auth_auth[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
+                array_push($navSelect, 'auth');
+            }
+            if(($auth_log[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
+                array_push($navSelect, 'log');
+            }
+            if(($auth_galleries[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
+                array_push($navSelect, 'galleries');
+            }
+            if(($auth_downlink[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
+                array_push($navSelect, 'downlink');
+            }
+            if(($auth_companies[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
+                array_push($navSelect, 'companies');
+            }
+            if(($auth_lookup_item[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
+                array_push($navSelect, 'lookup_item');
+            }
+            if(($auth_lookup[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
+                array_push($navSelect, 'lookup');
+            }
+            if(($auth_sensors[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
+                array_push($navSelect, 'sensors');
+            }
+            if(($auth_projects[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
+                array_push($navSelect, 'projects');
+            }
+            if(($auth_mix[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
+                array_push($navSelect, 'mix');
+            }
+            if(($auth_mix_calibration[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
+                array_push($navSelect, 'mix_calibration');
+            }
+            if(($auth_measurement[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
+                array_push($navSelect, 'measurement');
+            }
+            if(($auth_uplink[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
+                array_push($navSelect, 'uplink');
+            }
+            if(($auth_users[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
+                array_push($navSelect, 'users');
+            }
+        } else {
             array_push($navSelect, 'auth');
-        }
-        if(($auth_log[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
             array_push($navSelect, 'log');
-        }
-        if(($auth_galleries[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
             array_push($navSelect, 'galleries');
-        }
-        if(($auth_downlink[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
             array_push($navSelect, 'downlink');
-        }
-        if(($auth_companies[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
             array_push($navSelect, 'companies');
-        }
-        if(($auth_lookup_item[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
             array_push($navSelect, 'lookup_item');
-        }
-        if(($auth_lookup[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
             array_push($navSelect, 'lookup');
-        }
-        if(($auth_sensors[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
             array_push($navSelect, 'sensors');
-        }
-        if(($auth_projects[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
             array_push($navSelect, 'projects');
-        }
-        if(($auth_mix[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
             array_push($navSelect, 'mix');
-        }
-        if(($auth_mix_calibration[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
             array_push($navSelect, 'mix_calibration');
-        }
-        if(($auth_measurement[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
             array_push($navSelect, 'measurement');
-        }
-        if(($auth_uplink[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
             array_push($navSelect, 'uplink');
-        }
-        if(($auth_users[1] == 1) || ($auth_boss == 1) || ($auth_admin == 1)) {
             array_push($navSelect, 'users');
         }
 

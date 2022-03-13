@@ -28,7 +28,9 @@ class SensorsController extends Controller
         if ($request->project) {
             $query->where('sensors.project', $request->project);
         } else {
-            $query->where('sensors.project', $auth->project);
+            if (Pariette::who('admin') == 0) {
+                $query->where('sensors.project', $auth->project);
+            }
         }
         if ($request->DevEUI) {
             $query->where('sensors.DevEUI', $request->DevEUI);

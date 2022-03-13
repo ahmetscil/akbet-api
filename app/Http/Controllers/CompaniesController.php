@@ -19,8 +19,9 @@ class CompaniesController extends Controller
         }
 
         $query = DB::table('companies');
-
-        $query->where('companies.id', $auth->company);
+        if (Pariette::who('admin') == 0) {
+            $query->where('companies.id', $auth->company);
+        }
 
         if ($request->title) {
             $query->where('companies.title', 'like', '%'.$request->title.'%');

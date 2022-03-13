@@ -60,6 +60,7 @@ class UsersController extends Controller
             'email' => $request->email,
             'photo' => $request->photo,
             'phone' => $request->phone,
+            'admin' => 0,
             'ip' => Pariette::getIp(),
             'password' => Pariette::hash($request->password),
             'status' => $request->status ? $request->status : 1,
@@ -72,31 +73,31 @@ class UsersController extends Controller
             $exp = explode('-', $storeToken);
             $company = DB::table('companies')->where('token', $exp[0])->first();
 
-            $auth = [
+            $userAuth = [
                 'user' => $work,
                 'company' => $company->id,
                 'project' => $exp[1],
-                'auth' => 0110,
-                'log' => 0110,
-                'galleries' => 0110,
-                'downlink' => 0110,
-                'companies' => 0110,
-                'lookup_item' => 0110,
-                'lookup' => 0110,
-                'sensors' => 0110,
-                'projects' => 0110,
-                'mix' => 0110,
-                'mix_calibration' => 0110,
-                'measurement' => 0110,
-                'uplink' => 0110,
-                'users' => 0110,
+                'auth' => '0110',
+                'log' => '0000',
+                'galleries' => '0110',
+                'downlink' => '0110',
+                'companies' => '0000',
+                'lookup_item' => '0110',
+                'lookup' => '0110',
+                'sensors' => '0110',
+                'projects' => '0110',
+                'mix' => '0110',
+                'mix_calibration' => '0110',
+                'measurement' => '0110',
+                'uplink' => '0110',
+                'users' => '0010',
                 'boss' => 0,
                 'admin' => 0,
                 'status' => 1,
                 'created_at' => Pariette::now()
             ];
     
-            DB::table('authority')->insert($auth);
+            DB::table('authority')->insert($userAuth);
     
 
             return Hermes::send($work, 201);

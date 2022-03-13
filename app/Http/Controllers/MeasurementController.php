@@ -25,6 +25,19 @@ class MeasurementController extends Controller
 
         $query = DB::table('measurement');
 
+        if ($request->project) {
+            $snsr = $request->project;
+        } else {
+            $snsr = $auth->project;
+        }
+        $sensors = DB::table('sensors')->where('project', $snsr)->select('sensors.id')->get();
+        $a = array();
+        foreach ($sensors as $s) {
+            array_push($a, $s->id);
+        }
+        $query->whereIn('measurement.sensor', $a);
+
+
         if ($request->name) {
             $query->where('measurement.name', 'like', '%'.$request->name.'%');
         }
@@ -77,14 +90,6 @@ class MeasurementController extends Controller
             $query->where('measurement.status', 1);
         }
         
-        if ($request->project) {
-            $sensors = DB::table('sensors')->where('project', $request->project)->select('sensors.id')->get();
-            $a = array();
-            foreach ($sensors as $s) {
-                array_push($a, $s->id);
-            }
-            $query->whereIn('measurement.sensor', $a);
-        }
 
         $query->join('mix','mix.id','=','measurement.mix');
         $query->join('sensors','sensors.id','=','measurement.sensor');

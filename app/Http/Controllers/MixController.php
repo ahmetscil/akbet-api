@@ -30,9 +30,11 @@ class MixController extends Controller
         }
         
         if ($request->project) {
-            $query->where('mix.project', 'like', '%'.$request->project.'%');
+            $query->where('mix.project', $request->project);
         } else {
-            $query->where('mix.project', $auth->project);
+            if (Pariette::who('admin') == 0) {
+                $query->where('mix.project', $auth->project);
+            }
         }
 
         if ($request->title) {
