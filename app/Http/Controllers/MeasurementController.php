@@ -205,6 +205,12 @@ class MeasurementController extends Controller
         if (isset($request->ended_at)) {
             $data['ended_at'] = $request->ended_at;
         }
+        if (isset($request->max_temp)) {
+            $data['max_temp'] = $request->max_temp;
+        }
+        if (isset($request->min_temp)) {
+            $data['min_temp'] = $request->min_temp;
+        }
         if (isset($request->deployed_at)) {
             $data['deployed_at'] = $request->deployed_at;
         }

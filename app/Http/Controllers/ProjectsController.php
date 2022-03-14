@@ -37,6 +37,10 @@ class ProjectsController extends Controller
             } else if (($auth->admin == 1) && (!isset($request->company))) {
                 $query->where('projects.company', $auth->company);
             }
+        } else {
+            if ($request->company) {
+                $query->where('projects.company', $request->company);
+            }
         }
 
         if ($request->code) {

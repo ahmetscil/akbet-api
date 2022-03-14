@@ -20,13 +20,13 @@ class UsersController extends Controller
 
 		$exp = explode('-', $storeToken);
 		$company = DB::table('companies')->where('token', $exp[0])->first();
-		$query = DB::table('authority')
-        ->where([
-            'company' => $company->id,
-            'project' => $exp[1]
-        ])
-        ->join('users', 'users.id', 'authority.user')
-        ->select('users.name as userName', 'users.phone', 'users.email', 'authority.*');
+		$query = DB::table('authority')->where(['company' => $company->id,'project' => $exp[1]])->join('users', 'users.id', 'authority.user')->select('users.name as userName', 'users.phone', 'users.email', 'authority.*');
+        
+        if (isset($request->status)) {
+            $query->where('users.status', $request->status);
+        } else {
+            $query->where('users.status', 1);
+        }
 
         $data = $query->get();
 
@@ -112,7 +112,10 @@ class UsersController extends Controller
             return Hermes::send('lng_0002', 403);
         }
 
-        $data = DB::table('users')->find($id);
+        $authData = DB::table('authority')->find($id);
+        $user = $authData->user;
+
+        $data = DB::table('users')->find($user);
         return Hermes::send($data, 200);
     }
 
@@ -135,17 +138,30 @@ class UsersController extends Controller
         //     return Hermes::send($validator->messages(), 403);
 		// }
     
-        $data = [
-            'name' => $request->name,
-            'email' => $request->email,
-            'photo' => $request->photo,
-            'phone' => $request->phone,
-            'ip' => Pariette::getIp(),
-            'status' => $request->status,
-            'updated_at' => Pariette::now()
-        ];
+        $data = [];
+        if (isset($request->name)) {
+            $data['name'] = $request->name;
+        }
+        if (isset($request->email)) {
+            $data['email'] = $request->email;
+        }
+        if (isset($request->photo)) {
+            $data['photo'] = $request->photo;
+        }
+        if (isset($request->phone)) {
+            $data['phone'] = $request->phone;
+        }
+        if (isset($request->status)) {
+            $data['status'] = $request->status;
+        }
+        $data['ip'] = Pariette::getIp();
+        $data['updated_at'] = Pariette::now();
 
-        $update = DB::table('users')->where('id', $id)->update($data);
+
+        $authData = DB::table('authority')->find($id);
+        $user = $authData->user;
+
+        $update = DB::table('users')->where('id', $user)->update($data);
         
         if ($update) {
             return Hermes::send($data, 200);

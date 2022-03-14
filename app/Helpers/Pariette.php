@@ -123,6 +123,13 @@ class Pariette {
 
 	public static function authRole ($where, $what, $store, $project = null) {
 		$user = Auth::id();
+
+		$userStatus = Auth::user()['status'];
+		if ($userStatus == 0) {
+			auth()->logout();
+			return false;
+		}
+
 		$exp = explode('-', $store);
 		$company = DB::table('companies')->where('token', $exp[0])->first();
 		$query = DB::table('authority')->where(['user' => $user, 'company' => $company->id, 'project' => $exp[1]]);

@@ -25,7 +25,12 @@ class AuthController extends Controller
         $response['access_token'] = $token;
 
         $user = auth()->user();
-    
+
+        if ($user->status == 0) {
+            return response()->json(['error' => 'Hesabınız engellenmiştir.'], 403);
+        }
+
+        
         $auth = DB::table('authority')
             ->where('user', $user->id)
             ->join('companies', 'companies.id', 'authority.company')
