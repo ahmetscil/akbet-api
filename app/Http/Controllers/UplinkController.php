@@ -106,11 +106,25 @@ class UplinkController extends Controller
             return Hermes::send('lng_0002', 403);
         }
 
+        $c = DB::table('uplink')
+            ->where('uplink.measurement', $id)
+            ->join('measurement', 'measurement.id', 'uplink.measurement')
+            ->join('sensors', 'sensors.id', 'measurement.sensor')
+            ->join('projects', 'projects.id', 'sensors.project')
+            ->select('projects.id as projectId')
+            ->first();
+        if (($c) && ($c->projectId != $auth->project)) {
+            return Hermes::send('lng_0002', 403);
+        }
+
+
         $query = DB::table('uplink')
             ->where('uplink.measurement', $id)
-            ->offset(0)
-            ->limit($request->limit)
-            ->orderBy('id', 'DESC');
+            ->orderBy('counter', 'DESC');
+        if (intval($request->limit) != 0) {
+            $query->offset(0)->limit($request->limit);
+        }
+    
         if ($request->DevEUI) {
             $query->where('DevEUI', $request->DevEUI);
         }

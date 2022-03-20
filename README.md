@@ -18,3 +18,5 @@ lng_0001: not found
 lng_0002: authorization error
 lng_0003: create error
 lng_0004: update error
+lng_0005: existing
+lng_0006: delete ok

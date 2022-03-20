@@ -21,19 +21,25 @@ class AuthorityController extends Controller
         $query = DB::table('authority');
 
         if ($request->user) {
-            $query->where('user', $request->user);
+            $query->where('authority.user', $request->user);
         }
         if ($request->company) {
-            $query->where('company', $request->company);
+            $query->where('authority.company', $request->company);
         }
         if ($request->project) {
-            $query->where('project', $request->project);
+            $query->where('authority.project', $request->project);
         }
 
         $query->join('users','users.id','=','authority.user');
         $query->join('companies','companies.id','=','authority.company');
         $query->join('projects','projects.id','=','authority.project');
         $query->select('authority.*', 'users.name as userName', 'companies.title as companyName', 'projects.title as projectName');
+
+        if (isset($request->status)) {
+            $query->where('authority.status', $request->status);
+        } else {
+            $query->where('authority.status', 1);
+        }
 
         $data = $query->get();
 
@@ -56,9 +62,6 @@ class AuthorityController extends Controller
             'user' => 'required',
             'company' => 'required',
             'project' => 'required',
-            'crud' => 'required',
-            'boss' => 'required',
-            'admin' => 'required',
             'status' => 'required'
         ]);
 
@@ -70,9 +73,22 @@ class AuthorityController extends Controller
             'user' => $request->user,
             'company' => $request->company,
             'project' => $request->project,
-            'crud' => $request->crud,
-            'boss' => $request->boss,
-            'admin' => $request->admin,
+            'auth' => '0100',
+            'log' => '0100',
+            'galleries' => '0100',
+            'downlink' => '0100',
+            'companies' => '0100',
+            'lookup_item' => '0100',
+            'lookup' => '0100',
+            'sensors' => '0100',
+            'projects' => '0100',
+            'mix' => '0100',
+            'mix_calibration' => '0100',
+            'measurement' => '0100',
+            'uplink' => '0100',
+            'users' => '0100',
+            'boss' => 0,
+            'admin' => 0,
             'status' => $request->status,
             'created_at' => Pariette::now()
         ];
@@ -136,52 +152,58 @@ class AuthorityController extends Controller
 		}
     
         $data = [];
-        if ($request->auth) {
+        if (isset($request->auth)) {
             $data['auth'] = $request->auth;
         }
-        if ($request->log) {
+        if (isset($request->log)) {
             $data['log'] = $request->log;
         }
-        if ($request->galleries) {
+        if (isset($request->galleries)) {
             $data['galleries'] = $request->galleries;
         }
-        if ($request->downlink) {
+        if (isset($request->downlink)) {
             $data['downlink'] = $request->downlink;
         }
-        if ($request->companies) {
+        if (isset($request->companies)) {
             $data['companies'] = $request->companies;
         }
-        if ($request->lookup_item) {
+        if (isset($request->lookup_item)) {
             $data['lookup_item'] = $request->lookup_item;
         }
-        if ($request->lookup) {
+        if (isset($request->lookup)) {
             $data['lookup'] = $request->lookup;
         }
-        if ($request->sensors) {
+        if (isset($request->sensors)) {
             $data['sensors'] = $request->sensors;
         }
-        if ($request->projects) {
+        if (isset($request->projects)) {
             $data['projects'] = $request->projects;
         }
-        if ($request->mix) {
+        if (isset($request->mix)) {
             $data['mix'] = $request->mix;
         }
-        if ($request->mix_calibration) {
+        if (isset($request->mix_calibration)) {
             $data['mix_calibration'] = $request->mix_calibration;
         }
-        if ($request->measurement) {
+        if (isset($request->measurement)) {
             $data['measurement'] = $request->measurement;
         }
-        if ($request->uplink) {
+        if (isset($request->uplink)) {
             $data['uplink'] = $request->uplink;
         }
-        if ($request->users) {
+        if (isset($request->users)) {
             $data['users'] = $request->users;
         }
 
-        $data['boss'] = $request->boss;
-        $data['admin'] = $request->admin;
-        $data['status'] = $request->status;
+        if (isset($request->boss)) {
+            $data['boss'] = $request->boss;
+        }
+        if (isset($request->admin)) {
+            $data['admin'] = $request->admin;
+        }
+        if (isset($request->status)) {
+            $data['status'] = $request->status;
+        }
 
         $data['updated_at'] = Pariette::now();
 
@@ -199,5 +221,12 @@ class AuthorityController extends Controller
         if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
+
+        $update = DB::table('authority')->where('id', $id)->update(['status' => 0, 'updated_at' => Pariette::now()]);
+        if ($update) {
+            return Hermes::send('lng_0006', 200);
+        }
+        return Hermes::send('lng_0004', 204);
+
     }
 }

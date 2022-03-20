@@ -53,7 +53,7 @@ class SensorsController extends Controller
         if (isset($request->status)) {
             $query->where('sensors.status', $request->status);
         } else {
-            $query->where('sensors.status', 1);
+            $query->whereNotIn('sensors.status', [0]);
         }
 
         $query->join('projects','projects.id','=','sensors.project');
@@ -155,49 +155,29 @@ class SensorsController extends Controller
 		}
     
         $data = [];
-        if ($request->DevEUI) {
-            $data['DevEUI'] = $request->DevEUI;
-        }
-        if ($request->activation_energy) {
-            $data['activation_energy'] = $request->activation_energy;
-        }
-        if ($request->days) {
-            $data['days'] = $request->days;
-        }
-        if ($request->description) {
-            $data['description'] = $request->description;
-        }
-        if ($request->max_temp) {
-            $data['max_temp'] = $request->max_temp;
-        }
-        if ($request->min_temp) {
-            $data['min_temp'] = $request->min_temp;
-        }
-        if ($request->password) {
-            $data['password'] = $request->password;
-        }
-        if ($request->project) {
-            $data['project'] = $request->project;
-        }
-        if ($request->sensor_no) {
+
+        if (isset($request->sensor_no)) {
             $data['sensor_no'] = $request->sensor_no;
         }
-        if ($request->status) {
-            $data['status'] = $request->status;
+        if (isset($request->project)) {
+            $data['project'] = $request->project;
         }
-        if ($request->strength) {
-            $data['strength'] = $request->strength;
+        if (isset($request->DevEUI)) {
+            $data['DevEUI'] = strval($request->DevEUI);
         }
-        if ($request->temperature) {
-            $data['temperature'] = $request->temperature;
-        }
-        if ($request->title) {
-            $data['title'] = $request->title;
-        }
-        if ($request->type) {
+        if (isset($request->type)) {
             $data['type'] = $request->type;
         }
-
+        if (isset($request->title)) {
+            $data['title'] = $request->title;
+        }
+        if (isset($request->description)) {
+            $data['description'] = $request->description;
+        }
+        if (isset($request->status)) {
+            $data['status'] = $request->status;
+        }
+        
         $data['updated_at'] = Pariette::now();
 
         $update = DB::table('sensors')->where('id', $id)->update($data);

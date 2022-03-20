@@ -53,6 +53,7 @@ Route::prefix('{storeToken}')->group(function () {
         Route::apiResource('Sensors', SensorsController::class);
         Route::apiResource('Uplink', UplinkController::class);
         Route::apiResource('Users', UsersController::class);
+        Route::put('Users/UpdatePassword/{id}', [UsersController::class, 'updatePassword']);
         Route::apiResource('Lookup', LookupController::class);
     });
 });

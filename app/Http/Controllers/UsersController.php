@@ -17,10 +17,51 @@ class UsersController extends Controller
         if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
+        $exp = explode('-', $storeToken);
+        $company = DB::table('companies')->where('token', $exp[0])->first();
 
-		$exp = explode('-', $storeToken);
-		$company = DB::table('companies')->where('token', $exp[0])->first();
-		$query = DB::table('authority')->where(['company' => $company->id,'project' => $exp[1]])->join('users', 'users.id', 'authority.user')->select('users.name as userName', 'users.phone', 'users.email', 'authority.*');
+        if (isset($request->miniUserList)) {
+            $auths = DB::table('authority')->where('company', $company->id)->get();
+            $userlist = array();
+            foreach ($auths as $a) {
+                $u = DB::table('users')
+                    ->where('users.id', $a->user)
+                    ->join('authority', 'authority.user', 'users.id')
+                    ->select('users.name', 'users.id', 'authority.project', 'authority.company')
+                    ->first();
+                array_push($userlist, $u);
+            }
+
+            return Hermes::send($userlist, 200);
+        }
+
+        $userQ = [];
+        if (Pariette::who('admin') == 0) {
+            if (($auth->admin == 0) && ($auth->boss == 0)) {
+                $userQ['authority.company'] = $company->id;
+                $userQ['authority.project'] = $exp[1];
+            }
+            if ($auth->boss == 1) {
+                $userQ['authority.company'] = $company->id;
+            }
+            if ($auth->admin == 1) {
+                $userQ['authority.company'] = $company->id;
+            }
+        }
+        if (isset($request->project)) {
+            $userQ['authority.project'] = $request->project;
+        }
+        if (isset($request->company)) {
+            $userQ['authority.company'] = $request->company;
+        }
+
+
+        $query = DB::table('authority')
+            ->where($userQ)
+            ->join('users', 'users.id', 'authority.user')
+            ->join('companies', 'companies.id', 'authority.company')
+            ->join('projects', 'projects.id', 'authority.project')
+            ->select('users.name as userName', 'companies.title as companyName', 'projects.title as projectName', 'users.phone', 'users.email', 'authority.*');
         
         if (isset($request->status)) {
             $query->where('users.status', $request->status);
@@ -54,7 +95,12 @@ class UsersController extends Controller
         // if ($validator['errors']) {
         //     return Hermes::send($validator, 403);
         // }
-        
+
+        $c = DB::table('users')->where('email', $request->email)->first();
+        if ($c) {
+            return Hermes::send('lng_0005', 500);
+        }
+
         $data = [
             'name' => $request->name,
             'email' => $request->email,
@@ -76,7 +122,7 @@ class UsersController extends Controller
             $userAuth = [
                 'user' => $work,
                 'company' => $company->id,
-                'project' => $exp[1],
+                'project' => $request->project ? $request->project : $exp[1],
                 'auth' => '0110',
                 'log' => '0000',
                 'galleries' => '0110',
@@ -126,6 +172,10 @@ class UsersController extends Controller
         if ($auth == false) {
             return Hermes::send('lng_0002', 403);
         }
+        $c = DB::table('users')->where('email', $request->email)->first();
+        if ($c) {
+            return Hermes::send('lng_0005', 500);
+        }
 
 		// $validator = Validator::make($request->all(), [
         //     'name' => 'required',
@@ -157,6 +207,25 @@ class UsersController extends Controller
         $data['ip'] = Pariette::getIp();
         $data['updated_at'] = Pariette::now();
 
+
+        $authData = DB::table('authority')->find($id);
+        $user = $authData->user;
+
+        $update = DB::table('users')->where('id', $user)->update($data);
+        
+        if ($update) {
+            return Hermes::send($data, 200);
+        }
+        return Hermes::send('lng_0004', 204);
+    }
+
+    public function updatePassword(Request $request, $storeToken, $id)
+    {
+    
+        $data = [];
+        $data['ip'] = Pariette::getIp();
+        $data['password'] = Pariette::hash($request->password);
+        $data['updated_at'] = Pariette::now();
 
         $authData = DB::table('authority')->find($id);
         $user = $authData->user;
