@@ -145,7 +145,6 @@ class SensorsController extends Controller
         }
 
 		$validator = Validator::make($request->all(), [
-            'type' => 'required',
             'title' => 'required',
             'description' => 'required',
             'status' => 'required'

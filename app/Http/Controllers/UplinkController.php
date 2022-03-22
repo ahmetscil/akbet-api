@@ -24,6 +24,10 @@ class UplinkController extends Controller
             $query->where('DevEUI', $request->search);
         }
 
+        if (isset($request->measurement)) {
+            $query->where('measurement', $request->measurement);
+        }
+
         $data = $query->get();
 
         if ($data) {
