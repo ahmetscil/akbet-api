@@ -110,13 +110,19 @@ class UplinkController extends Controller
             return Hermes::send('lng_0002', 403);
         }
 
-        $c = DB::table('uplink')
+        $q = DB::table('uplink')
             ->where('uplink.measurement', $id)
             ->join('measurement', 'measurement.id', 'uplink.measurement')
             ->join('sensors', 'sensors.id', 'measurement.sensor')
             ->join('projects', 'projects.id', 'sensors.project')
-            ->select('projects.id as projectId')
-            ->first();
+            ->select('projects.id as projectId');
+
+        if (($request->startDate) && ($request->endDate)) {
+            $q->whereBetween('uplink.created_at', [$request->startDate, $request->endDate]);
+        }
+
+        $c = $q->first();
+
         if (($c) && ($c->projectId != $auth->project)) {
             return Hermes::send('lng_0002', 403);
         }
@@ -125,6 +131,11 @@ class UplinkController extends Controller
         $query = DB::table('uplink')
             ->where('uplink.measurement', $id)
             ->orderBy('counter', 'DESC');
+
+        if (($request->startDate) && ($request->endDate)) {
+            $query->whereBetween('uplink.created_at', [$request->startDate, $request->endDate]);
+        }
+    
         if (intval($request->limit) != 0) {
             $query->offset(0)->limit($request->limit);
         }

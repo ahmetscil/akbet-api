@@ -153,6 +153,9 @@ class MeasurementController extends Controller
             'ended_at' => date("y-m-d H:i:s", strtotime($request->ended_at)),
             'deployed_at' => date("y-m-d H:i:s", strtotime($request->deployed_at)),
             'last_data_at' => date("y-m-d H:i:s", strtotime($request->last_data_at)),
+            'concrete_pouring_time' => $request->concrete_pouring_time,
+            'concrete_pouring_temp' => $request->concrete_pouring_temp,
+            'reference_temp' => $request->reference_temp,
             'status' => $request->status ? $request->status : 1,
             'created_at' => Pariette::now()
         ];
@@ -213,6 +216,15 @@ class MeasurementController extends Controller
         }
         if (isset($request->deployed_at)) {
             $data['deployed_at'] = $request->deployed_at;
+        }
+        if (isset($request->concrete_pouring_time)) {
+            $data['concrete_pouring_time'] = $request->concrete_pouring_time;
+        }
+        if (isset($request->concrete_pouring_temp)) {
+            $data['concrete_pouring_temp'] = $request->concrete_pouring_temp;
+        }
+        if (isset($request->reference_temp)) {
+            $data['reference_temp'] = $request->reference_temp;
         }
         if (isset($request->status)) {
             $data['status'] = $request->status;

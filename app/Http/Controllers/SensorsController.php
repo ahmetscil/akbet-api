@@ -38,6 +38,9 @@ class SensorsController extends Controller
         if ($request->type) {
             $query->where('sensors.type', $request->type);
         }
+        if ($request->sf) {
+            $query->where('sensors.sf', $request->sf);
+        }
         if ($request->title) {
             $query->where('sensors.title', 'like', '%'.$request->title.'%');
         }
@@ -49,6 +52,9 @@ class SensorsController extends Controller
         }
         if ($request->created_at) {
             $query->where('sensors.created_at', $request->created_at);
+        }
+        if ($request->last_data_at) {
+            $query->where('sensors.last_data_at', $request->last_data_at);
         }
         if (isset($request->status)) {
             $query->where('sensors.status', $request->status);
@@ -100,6 +106,7 @@ class SensorsController extends Controller
             'DevEUI' => $request->DevEUI,
             'type' => $request->type,
             'title' => $request->title,
+            'sf' => $request->sf,
             'description' => $request->description,
             'status' => $request->status ? $request->status : 1,
             'sensor_no' => $request->sensor_no,
@@ -169,6 +176,9 @@ class SensorsController extends Controller
         }
         if (isset($request->title)) {
             $data['title'] = $request->title;
+        }
+        if (isset($request->sf)) {
+            $data['sf'] = $request->sf;
         }
         if (isset($request->description)) {
             $data['description'] = $request->description;
