@@ -228,6 +228,9 @@ class MeasurementController extends Controller
         }
         if (isset($request->status)) {
             $data['status'] = $request->status;
+            if ($request->status == 0) {
+                $data['ended_at'] = Pariette::now();
+            }
         }
         
         $data['updated_at'] = Pariette::now();
