@@ -4,13 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Helpers\Hermes;
+use App\Helpers\Pariette;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Controller;
+use Mail;
 
 class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login', 'forgotPassword', 'updatePassword']]);
     }
 
     public function login()
@@ -56,6 +61,63 @@ class AuthController extends Controller
         return response()->json(auth()->user());
     }
 
+    public function forgotPassword(Request $request)
+	{
+		$validator = Validator::make($request->all(), [
+			'email'=>'required|email'
+		]);
+		if ($validator->fails()) {
+			return Hermes::send($validator->messages(), 403);
+		}
+		$email = $request->email;
+		$code = rand(1000,9999); // 4 Karakterli random code (int)
+	
+		$checkEmail = DB::table('users')->where('email', $email)->first();
+		if(!$checkEmail){
+			return Hermes::send('ERR1000', 404);
+		}
+		if ($checkEmail->status == 8) {
+			return Hermes::send('ERR1005', 403);
+		}
+
+		$loadCode = DB::table('users')->where('email', $email)->update([
+			'confirmation_code' => $code,
+		]);
+		if(!$loadCode){
+			return Hermes::send('ERR1001', 403);
+		}
+		$data = [
+			'code' => $code,
+		];
+		 Mail::send('forgot-password', $data, function ($message) use($email){
+			$message->to($email);
+			$message->subject('Update Password');
+		});
+		if(count(Mail::failures()) > 0){
+			return Hermes::send('ERR1002', 403);
+		} else{
+				return Hermes::send("SUC1000", 200);
+		}
+	}
+
+	public function updatePassword(Request $request)
+	{
+		$users = DB::table('users')->where([
+			'email' => $request->email,
+			'confirmation_code' => $request->code
+		])->get();
+		if(!$users->isEmpty()){
+			foreach ($users as $user){
+				$updatePassword =	DB::table('users')->where('id',$user->id)->update([
+					'password' => Pariette::hash($request->password),
+                    'confirmation_code' => null// işlem başarılıysa kodu sıfırlıyorum.
+                ]);
+            }
+            return Hermes::send("SUC1001", 200);
+        } else {
+            return Hermes::send("ERR1004", 403);
+        }
+	}
 
     public function logout()
     {

@@ -50,7 +50,19 @@ class UploadFile
               'url'=>$imglg,
               'name'=>$fileNewName
             ];
-                  return Pariette::send($data, 200);
+            
+            $gal = [
+                'project' => $request->project,
+                'tag' => $request->tag,
+                'title' => $fileName,
+                'user' => $request->user,
+                'photo' => $imglg,
+                'created_at' => Pariette::now()
+            ];
+    
+            DB::table('galleries')->insert($gal);
+    
+                return Hermes::send($data, 200);
           }
     }
 }

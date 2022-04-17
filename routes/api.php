@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Actions\Breadcrumb;
 use App\Actions\UploadFile;
+use App\Actions\GetImage;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuthorityController;
 use App\Http\Controllers\CompaniesController;
@@ -24,9 +25,13 @@ use App\Http\Controllers\LookupController;
 Route::group(['middleware' => 'api', 'prefix' => 'auth'], function ($router) {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('forgotPassword', [AuthController::class , 'forgotPassword']);
+    Route::post('updatePassword', [AuthController::class , 'updatePassword']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::get('me', [AuthController::class, 'me']);
 });
+
+Route::get('GetImage', GetImage::class);
 
 Route::get('/clear', function() {
     Artisan::call('cache:clear');

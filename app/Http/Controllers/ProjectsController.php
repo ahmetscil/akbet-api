@@ -136,6 +136,11 @@ class ProjectsController extends Controller
             ->join('companies', 'companies.id', 'projects.company')
             ->select('projects.*', 'companies.title as companyName')
             ->first();
+
+        $data->gallery = DB::table('galleries')
+            ->where('galleries.project', $id)
+            ->select('galleries.*')
+            ->get();
         return Hermes::send($data, 200);
     }
 
