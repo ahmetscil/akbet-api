@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Actions\Breadcrumb;
+use App\Actions\UploadFile;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuthorityController;
 use App\Http\Controllers\CompaniesController;
@@ -39,6 +40,7 @@ Route::get('/clear', function() {
 Route::prefix('{storeToken}')->group(function () {
     Route::group(['middleware' => ['jwt.verify']], function() {
         Route::get('Breadcrumb', Breadcrumb::class);
+        Route::post('Upload', UploadFile::class);
         Route::apiResource('Auth', AuthController::class);
         Route::apiResource('Navigation', NavigationController::class);
         Route::apiResource('Authority', AuthorityController::class);
