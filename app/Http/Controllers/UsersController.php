@@ -145,7 +145,7 @@ class UsersController extends Controller
     
             DB::table('authority')->insert($userAuth);
     
-
+            Pariette::logger('users:created', 'users.id:' . $work, null, null);
             return Hermes::send($work, 201);
         }
         return Hermes::send('lng_0003', 204);
@@ -214,6 +214,7 @@ class UsersController extends Controller
         $update = DB::table('users')->where('id', $user)->update($data);
         
         if ($update) {
+            Pariette::logger('users:updated', 'users.id:' . $user, null, null);
             return Hermes::send($data, 200);
         }
         return Hermes::send('lng_0004', 204);

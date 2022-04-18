@@ -132,7 +132,7 @@ class CompaniesController extends Controller
                 ];
         
                 DB::table('authority')->insert($auth);
-                Pariette::logger('createCompany',$request->title . ' Firması oluşturuldu', $company, $project);
+                Pariette::logger('company:create',$request->title, null, null);
 
                 $response = [];
                 $response['company'] = $company;
@@ -220,6 +220,7 @@ class CompaniesController extends Controller
         $update = DB::table('companies')->where('id', $id)->update($data);
         
         if ($update) {
+            Pariette::logger('company:update', 'companies.id: ' . $id, null, null);
             return Hermes::send($data, 200);
         }
         return Hermes::send('lng_0004', 204);

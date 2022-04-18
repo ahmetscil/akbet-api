@@ -119,6 +119,7 @@ class MixController extends Controller
 
         $work = DB::table('mix')->insertGetId($data);
         if ($work) {
+            Pariette::logger('mix:created', 'mix.id:' . $work, null, null);
             return Hermes::send($work, 201);
         }
         return Hermes::send('lng_0003', 204);
@@ -188,6 +189,7 @@ class MixController extends Controller
         $update = DB::table('mix')->where('id', $id)->update($data);
         
         if ($update) {
+            Pariette::logger('mix_calibration:updated', 'mix.id:' . $id, null, null);
             return Hermes::send($data, 200);
         }
         return Hermes::send('lng_0004', 204);
