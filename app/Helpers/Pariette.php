@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
 class Pariette {
 	
-	public static function logger($operation, $info = 'autoLog', $company = 'default', $project)
+	public static function logger($operation, $info = 'autoLog', $company = null, $project = null)
 	{
 		foreach (array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR') as $key){
 			if (array_key_exists($key, $_SERVER) === true){

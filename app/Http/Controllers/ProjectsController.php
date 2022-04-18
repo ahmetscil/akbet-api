@@ -119,7 +119,7 @@ class ProjectsController extends Controller
 
         $work = DB::table('projects')->insertGetId($data);
         if ($work) {
-            Pariette::logger('projects:created', 'projects.id:' . $work, null, null);
+            Pariette::logger('projects:created', 'projects.id:' . $work);
             return Hermes::send($work, 201);
         }
         return Hermes::send('lng_0003', 204);
@@ -232,7 +232,7 @@ class ProjectsController extends Controller
         $update = DB::table('projects')->where('id', $id)->update($data);
         
         if ($update) {
-            Pariette::logger('projects:updated', 'projects.id:' . $id, null, null);
+            Pariette::logger('projects:updated', 'projects.id:' . $id);
             return Hermes::send($data, 200);
         }
         return Hermes::send('lng_0004', 204);

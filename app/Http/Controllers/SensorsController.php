@@ -115,7 +115,7 @@ class SensorsController extends Controller
 
         $work = DB::table('sensors')->insertGetId($data);
         if ($work) {
-            Pariette::logger('sensors:created', 'sensors.id:' . $work, null, null);
+            Pariette::logger('sensors:created', 'sensors.id:' . $work);
             return Hermes::send($work, 201);
         }
         return Hermes::send('lng_0003', 204);
@@ -193,7 +193,7 @@ class SensorsController extends Controller
         $update = DB::table('sensors')->where('id', $id)->update($data);
         
         if ($update) {
-            Pariette::logger('sensors:updated', 'sensors.id:' . $id, null, null);
+            Pariette::logger('sensors:updated', 'sensors.id:' . $id);
             return Hermes::send($data, 200);
         }
         return Hermes::send('lng_0004', 204);

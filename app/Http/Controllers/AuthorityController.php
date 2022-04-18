@@ -211,7 +211,7 @@ class AuthorityController extends Controller
         $update = DB::table('authority')->where('id', $id)->update($data);
         
         if ($update) {
-            Pariette::logger('user:authority', 'auth.id:' .$id . ' yetkiler düzenlendi.', $storeToken, null);
+            Pariette::logger('user:authority', 'auth.id:' .$id . ' yetkiler düzenlendi.', $storeToken);
             return Hermes::send($data, 200);
         }
         return Hermes::send('lng_0004', 204);

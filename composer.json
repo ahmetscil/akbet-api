@@ -14,6 +14,7 @@
         "laravel/sanctum": "^2.11",
         "laravel/tinker": "^2.5",
         "lorisleiva/laravel-actions": "^2.2",
+        "rap2hpoutre/laravel-log-viewer": "^2.2",
         "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {

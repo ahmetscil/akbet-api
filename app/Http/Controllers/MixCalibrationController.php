@@ -72,7 +72,7 @@ class MixCalibrationController extends Controller
 
         $work = DB::table('mix_calibration')->insertGetId($data);
         if ($work) {
-            Pariette::logger('mix_calibration:created', 'mix_calibration.id:' . $work, null, null);
+            Pariette::logger('mix_calibration:created', 'mix_calibration.id:' . $work);
             return Hermes::send($work, 201);
         }
         return Hermes::send('lng_0003', 204);
@@ -118,7 +118,7 @@ class MixCalibrationController extends Controller
         $update = DB::table('mix_calibration')->where('id', $id)->update($data);
         
         if ($update) {
-            Pariette::logger('mix_calibration:updated', 'mix_calibration.id:' . $id, null, null);
+            Pariette::logger('mix_calibration:updated', 'mix_calibration.id:' . $id);
             return Hermes::send($data, 200);
         }
         return Hermes::send('lng_0004', 204);

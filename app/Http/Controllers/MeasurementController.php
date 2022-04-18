@@ -162,7 +162,7 @@ class MeasurementController extends Controller
 
         $work = DB::table('measurement')->insertGetId($data);
         if ($work) {
-            Pariette::logger('measurement:created', 'measurement.id:' . $work, null, null);
+            Pariette::logger('measurement:created', 'measurement.id:' . $work);
             return Hermes::send($work, 201);
         }
         return Hermes::send('lng_0003', 204);
@@ -239,7 +239,7 @@ class MeasurementController extends Controller
         $update = DB::table('measurement')->where('id', $id)->update($data);
         
         if ($update) {
-            Pariette::logger('measurement:update', 'measurement.id:' . $id, null, null);
+            Pariette::logger('measurement:update', 'measurement.id:' . $id);
             return Hermes::send($data, 200);
         }
         return Hermes::send('lng_0004', 204);

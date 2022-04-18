@@ -52,7 +52,7 @@ class AuthController extends Controller
         $response['expires_in'] = auth()->factory()->getTTL() * 60;
         $response['user'] = $user;
         $response['token_type'] = 'bearer';
-        Pariette::logger('user:login', $user->email . ' oturum açtı.', null, null);
+        Pariette::logger('user:login', $user->id);
     
         return $response;
     }
@@ -97,7 +97,7 @@ class AuthController extends Controller
 		if(count(Mail::failures()) > 0){
 			return Hermes::send('ERR1002', 403);
 		} else{
-            Pariette::logger('user:forgotPassword', $email . ' şifre sıfırlama talebi gönderdi.', null, null);
+            Pariette::logger('user:forgotPassword', $email . ' şifre sıfırlama talebi gönderdi.');
             return Hermes::send("SUC1000", 200);
 		}
 	}
@@ -115,7 +115,7 @@ class AuthController extends Controller
                     'confirmation_code' => null// işlem başarılıysa kodu sıfırlıyorum.
                 ]);
             }
-            Pariette::logger('user:updatePassword', $request->email . ' şifresini sıfırladı.', null, null);
+            Pariette::logger('user:updatePassword', $request->email . ' şifresini sıfırladı.');
             return Hermes::send("SUC1001", 200);
         } else {
             return Hermes::send("ERR1004", 403);
