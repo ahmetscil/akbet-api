@@ -1,3 +1,10 @@
+if (isset($request->sensorUplink)) {
+            $sensorMeasurement = DB::table('measurement')->where('sensor', $id)->get();
+            foreach ($sensorMeasurement as $s) {
+                $s->uplink = DB::table('uplink')->where('measurement', $s->id)->get();
+            }
+            $data['sensorMeasurement'] = $sensorMeasurement;
+        }
 <?php
 
 namespace App\Http\Controllers;
